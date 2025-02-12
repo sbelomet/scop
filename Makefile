@@ -6,7 +6,7 @@
 #    By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/11 13:18:10 by sbelomet          #+#    #+#              #
-#    Updated: 2025/02/12 13:06:29 by sbelomet         ###   ########.fr        #
+#    Updated: 2025/02/12 14:37:05 by sbelomet         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,8 @@ NAME		= scop
 
 CC			= gcc
 CC_FLAGS	= -Wall -Wextra -Werror -g3
-GRPHX_LIBS	= -lGL -lX11
+GLFW_NAME	= glfw-3.4
+LINK_LIBS	= -lglfw3 -lGL -lX11 -lpthread -lXrandr -lXi -ldl -lm
 VALGRIND	= valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes
 ARGS		= 0
 
@@ -39,24 +40,24 @@ SRC_PATH	= src/
 OBJ_PATH	= obj/
 LIB_PATH	= lib/
 INCLUDE		= -I include/ -I $(LIB_PATH)libft/include/ \
-			$(LIB_PATH)glfw-3.4/include
+			-I $(LIB_PATH)$(GLFW_NAME)/include
 
 # Files
 
-SRC_FILES = main.c
+SRC_FILES = main.c glad.c
 OBJ_FILES = $(SRC_FILES:.c=.o)
 
 SRC		= $(addprefix $(SRC_PATH), $(SRC_FILES))
 OBJ		= $(addprefix $(OBJ_PATH), $(OBJ_FILES))
 LIBFT	= $(LIB_PATH)libft/libft.a
-GLFW	= $(LIB_PATH)glfw-3.4/src
+GLFW	= $(LIB_PATH)$(GLFW_NAME)/src
 
 # Commands
 
-all: _libft $(OBJ_PATH) $(NAME)
+all: _libft _glfw $(OBJ_PATH) $(NAME)
 
 $(NAME): $(OBJ)
-	$(CC) $(CC_FLAGS) $(OBJ) -L$(LIB_PATH)libft -lft -L$(GLFW) -o $(NAME) $(GRPHX_LIBS)
+	$(CC) $(CC_FLAGS) $(OBJ) -L$(LIB_PATH)libft -lft -L$(GLFW) $(LINK_LIBS) -o $(NAME)
 
 $(OBJ_PATH)%.o: $(SRC_PATH)%.c
 	$(CC) $(CC_FLAGS) $(INCLUDE) -o $@ -c $<
@@ -67,12 +68,18 @@ $(OBJ_PATH):
 _libft:
 	@make -C $(LIB_PATH)libft
 
+_glfw:
+	@cmake -S $(LIB_PATH)$(GLFW_NAME) -B $(LIB_PATH)$(GLFW_NAME)
+	@make -C $(LIB_PATH)$(GLFW_NAME)
+
 clean:
 	@make clean -C $(LIB_PATH)libft
+	@make clean -C $(LIB_PATH)$(GLFW_NAME)
 	rm -rf $(OBJ_PATH)
 
 fclean: clean
 	rm -rf $(LIBFT)
+	rm -rf $(GLFW)/libglfw3.a
 	rm -rf $(NAME)
 
 re: fclean all
