@@ -3,60 +3,45 @@
 /*                                                        :::      ::::::::   */
 /*   ft_atoi.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lgosselk <lgosselk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/24 13:51:45 by lgosselk          #+#    #+#             */
-/*   Updated: 2024/01/18 10:20:35 by lgosselk         ###   ########.fr       */
+/*   Created: 2023/10/10 16:48:26 by sbelomet          #+#    #+#             */
+/*   Updated: 2025/02/12 09:43:23 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/libft.h"
+#include "libft.h"
 
-static int	ft_whitespace(char c)
+int	ft_atoi(const char *str)
 {
-	if (c == ' ' || c == '\t' || c == '\n'
-		|| c == '\v' || c == '\f' || c == '\r')
-		return (1);
-	return (0);
-}
-
-static int	ft_sign(char c)
-{
-	if (c == 45 || c == 43)
-		return (1);
-	return (0);
-}
-
-static int	ft_number(char c)
-{
-	if (c >= 48 && c <= 57)
-		return (1);
-	return (0);
-}
-
-int	ft_atoi(const char *nptr)
-{
-	int		i;
-	int		sign;
-	char	*ptr;
-	int		result;
+	int	i;
+	int	neg;
+	int	res;
 
 	i = 0;
-	sign = 1;
-	result = 0;
-	ptr = (char *)nptr;
-	while (ft_whitespace(ptr[i]))
+	neg = 1;
+	res = 0;
+	while ((str[i] > 8 && str[i] < 14) || str[i] == ' ')
 		i++;
-	if (ft_sign(ptr[i]))
+	if (str[i] == '-')
 	{
-		if (ptr[i] == 45)
-			sign *= -1;
+		neg *= -1;
 		i++;
 	}
-	while (ft_number(ptr[i]))
+	else if (str[i] == '+')
+		i++;
+	while (str[i] > 47 && str[i] < 58)
 	{
-		result = (result * 10) + (ptr[i] - '0');
+		res = res * 10 + (str[i] - '0');
 		i++;
 	}
-	return (result * sign);
+	return (res * neg);
 }
+
+/*
+int	main(void)
+{
+	char	str[] = "\n\n\n  -46\b9 \n5d6";
+
+	printf("atoi return: %d", ft_atoi(str));
+}*/

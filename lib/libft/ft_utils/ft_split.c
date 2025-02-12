@@ -3,102 +3,87 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lgosselk <lgosselk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/25 10:06:46 by lgosselk          #+#    #+#             */
-/*   Updated: 2024/01/18 10:20:40 by lgosselk         ###   ########.fr       */
+/*   Created: 2023/10/17 09:49:59 by sbelomet          #+#    #+#             */
+/*   Updated: 2025/02/12 09:47:06 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/libft.h"
+#include "libft.h"
 
-static int	ft_compare(char toCompare, char c)
-{
-	if (toCompare == c || toCompare == '\0')
-		return (1);
-	return (0);
-}
-
-static int	ft_count_words(char *s, char c)
+static int	ft_countstrs(char const *s, char c)
 {
 	int	i;
-	int	words;
+	int	count;
 
 	i = 0;
-	words = 0;
+	count = 0;
 	while (s[i])
 	{
-		if (!ft_compare(s[i], c) && ft_compare(s[i + 1], c))
-			words++;
-		i++;
+		while (s[i] == c)
+			i++;
+		if (s[i])
+			count++;
+		while (s[i] && s[i] != c)
+			i++;
 	}
-	return (words);
+	return (count);
 }
 
-static void	ft_push(char *dest, char *src, char c)
+static void	ft_buildtab(char **tab, char const *s, char c)
 {
+	int	start;
+	int	end;
 	int	i;
 
+	start = 0;
 	i = 0;
-	while (!ft_compare(src[i], c))
+	end = 0;
+	while (s[end])
 	{
-		dest[i] = src[i];
-		i++;
+		while (s[start] == c)
+			start++;
+		end = start;
+		while (s[end] && s[end] != c)
+			end++;
+		if ((s[end] == c || s[end] == '\0') && start != end)
+		{
+			tab[i] = ft_substr(s, start, (end - start));
+			i++;
+			start = end;
+		}
 	}
-	dest[i] = '\0';
+	tab[i] = NULL;
 }
 
-static int	ft_logic(char **result, char *s, char c)
+char	**ft_split(char const *s, char c)
 {
-	int	i;
-	int	j;
-	int	index;
+	char	**res;
+	int		str_count;
+
+	if (!s)
+		return (NULL);
+	str_count = ft_countstrs(s, c);
+	res = (char **)malloc((str_count + 1) * sizeof(char *));
+	if (!res)
+		return (NULL);
+	ft_buildtab(res, s, c);
+	return (res);
+}
+
+/*
+int main(void) {
+    char str[] = "lorem ipsum dolor sit    ";
+    char delim = ' ';
+    char** result = ft_split(str, delim);
+    int i;
 
 	i = 0;
-	index = 0;
-	while (s[i])
+	while (result[i] != NULL)
 	{
-		if (s[i] == c)
-			i++;
-		else
-		{
-			j = 0;
-			while (!ft_compare(s[i + j], c))
-				j++;
-			result[index] = (char *) malloc((j + 1) * sizeof(char));
-			if (result[index] == NULL)
-				return (0);
-			ft_push(result[index], s + i, c);
-			i += j;
-			index++;
-		}
-	}
-	return (1);
-}
-
-char	**ft_split(const char *s, char c)
-{	
-	int		i;
-	char	*ptr;
-	char	**result;
-	int		count_words;
-
-	ptr = (char *) s;
-	count_words = ft_count_words(ptr, c);
-	result = (char **) malloc((count_words + 1) * sizeof(char *));
-	if (result == NULL)
-		return (NULL);
-	result[count_words] = 0;
-	if (ft_logic(result, ptr, c) != 1)
-	{
-		i = 0;
-		while (result[i])
-		{
-			free(result[i]);
-			i++;
-		}
-		free(result);
-		return (NULL);
-	}
-	return (result);
-}
+        printf("|%s|\n", result[i]);
+		i++;
+    }
+    return 0;
+}*/

@@ -6,11 +6,11 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:28:13 by lgosselk          #+#    #+#             */
-/*   Updated: 2024/06/05 15:23:09 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/02/12 09:42:08 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/libft.h"
+#include "libft.h"
 
 double	ft_atof(char *str)
 {

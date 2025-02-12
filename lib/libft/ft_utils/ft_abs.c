@@ -6,11 +6,11 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 12:23:52 by sbelomet          #+#    #+#             */
-/*   Updated: 2024/04/24 09:53:52 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/02/12 09:41:31 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/libft.h"
+#include "libft.h"
 
 double	ft_abs(double n)
 {

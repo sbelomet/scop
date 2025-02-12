@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lgosselk <lgosselk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 14:41:38 by lgosselk          #+#    #+#             */
-/*   Updated: 2024/04/26 10:29:27 by lgosselk         ###   ########.fr       */
+/*   Updated: 2025/02/12 09:54:57 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,9 @@ int		ft_isascii(int c);
 int		ft_isdigit(int c);
 int		ft_isprint(int c);
 double	ft_atof(char *str);
+size_t	ft_strlen(const char *s);
 int		ft_atoi(const char *nptr);
 char	*ft_strdup(const char *s1);
-size_t	ft_strlen(const char *str);
 void	ft_putnbr_fd(int n, int fd);
 void	ft_bzero(void *s, size_t n);
 void	ft_putstr_fd(char *s, int fd);
@@ -68,14 +68,13 @@ char	*ft_substr(const char *s, unsigned int start, size_t len);
 char	*ft_strnstr(const char *haystack, const char *needle, size_t len);
 
 /* Get next line */
-
 char	*get_next_line(int fd);
 char	*ft_get_line(char *remind);
 char	*ft_substr_remind(char *s);
 char	*ft_read(int fd, char *remind);
 char	*ft_to_remind(char	*remind, char *buff);
 
-/* Garbage collextor versions */
+/* Garbage collector versions */
 void	ft_malloc_clear(t_alloc **lst);
 char	*ft_strdup_allocated(const char *s1, t_alloc **alloc);
 char	**ft_split_alloc(const char *s, char c, t_alloc **alloc);

@@ -3,64 +3,71 @@
 /*                                                        :::      ::::::::   */
 /*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lgosselk <lgosselk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/25 11:20:32 by lgosselk          #+#    #+#             */
-/*   Updated: 2024/01/18 10:20:39 by lgosselk         ###   ########.fr       */
+/*   Created: 2023/10/12 14:09:42 by sbelomet          #+#    #+#             */
+/*   Updated: 2025/02/12 09:45:25 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/libft.h"
+#include "libft.h"
 
-static int	ft_nbrlen(long nbr)
+static int	ft_numlen(int n)
 {
 	int	i;
 
 	i = 0;
-	if (nbr < 0)
-	{
-		nbr *= -1;
+	if (n <= 0)
 		i++;
-	}
-	while (nbr != 0)
+	while (n)
 	{
-		nbr = nbr / 10;
+		n /= 10;
 		i++;
 	}
 	return (i);
 }
 
-static void	ft_putnbr_mod(long nbr, char *str, int *i)
+static int	ft_specialnum(char *res, int n)
 {
-	if (nbr >= 10)
+	if (n == -2147483648)
 	{
-		ft_putnbr_mod(nbr / 10, str, i);
-		ft_putnbr_mod(nbr % 10, str, i);
+		res[0] = '-';
+		res[1] = '2';
+		n = 147483648;
 	}
-	else
-		str[(*i)++] = nbr + '0';
+	if (n < 0)
+	{
+		res[0] = '-';
+		n *= -1;
+	}
+	if (n == 0)
+		res[0] = '0';
+	return (n);
 }
 
 char	*ft_itoa(int n)
 {
-	int		i;
-	long	nbr;
-	char	*str;
+	char	*res;
+	int		num;
+	int		numlen;
 
-	nbr = n;
-	if (nbr == 0)
-		return (ft_strdup("0"));
-	else
-		str = (char *) malloc((ft_nbrlen(nbr) + 1) * sizeof(char));
-	if (str == NULL)
+	numlen = ft_numlen(n);
+	res = (char *)malloc(numlen * sizeof(char) + 1);
+	if (!res)
 		return (NULL);
-	i = 0;
-	if (nbr < 0)
+	num = ft_specialnum(res, n);
+	res[numlen] = '\0';
+	while (num)
 	{
-		str[i++] = '-';
-		nbr *= -1;
+		res[numlen - 1] = (num % 10) + '0';
+		num /= 10;
+		numlen--;
 	}
-	ft_putnbr_mod(nbr, str, &i);
-	str[i] = '\0';
-	return (str);
+	return (res);
 }
+
+/*
+int	main(void)
+{
+	printf("num: |%s|\n", ft_itoa(0));
+}*/

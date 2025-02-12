@@ -6,13 +6,13 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/09 15:53:53 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/02/11 14:59:38 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/02/12 09:54:54 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	ft_strlen(const char *s)
+size_t	ft_strlen(const char *s)
 {
 	int	i;
 

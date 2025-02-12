@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split_alloc.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lgosselk <lgosselk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 13:38:11 by lgosselk          #+#    #+#             */
-/*   Updated: 2024/04/24 13:42:10 by lgosselk         ###   ########.fr       */
+/*   Updated: 2025/02/12 09:51:01 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/libft.h"
+#include "libft.h"
 
 static int	ft_compare(char toCompare, char c)
 {

@@ -6,22 +6,19 @@
 #    By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/11 13:18:10 by sbelomet          #+#    #+#              #
-#    Updated: 2025/02/11 13:34:05 by sbelomet         ###   ########.fr        #
+#    Updated: 2025/02/12 13:06:29 by sbelomet         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-# Variables
+# Base variables
 
 NAME		= scop
 
 CC			= gcc
 CC_FLAGS	= -Wall -Wextra -Werror -g3
-GRPHX_FLAGS	= -Lmlx -lmlx -framework OpenGL -framework AppKit
-
-SRC_PATH	= src/
-INC_PATH	= include/
-OBJ_PATH	= obj/
-LIB_PATH	= lib/
+GRPHX_LIBS	= -lGL -lX11
+VALGRIND	= valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes
+ARGS		= 0
 
 # Colors
 
@@ -36,18 +33,51 @@ MAGENTA		= \033[0;95m
 CYAN		= \033[1;96m
 WHITE		= \033[0;97m
 
+# Paths
+
+SRC_PATH	= src/
+OBJ_PATH	= obj/
+LIB_PATH	= lib/
+INCLUDE		= -I include/ -I $(LIB_PATH)libft/include/ \
+			$(LIB_PATH)glfw-3.4/include
+
+# Files
+
+SRC_FILES = main.c
+OBJ_FILES = $(SRC_FILES:.c=.o)
+
+SRC		= $(addprefix $(SRC_PATH), $(SRC_FILES))
+OBJ		= $(addprefix $(OBJ_PATH), $(OBJ_FILES))
+LIBFT	= $(LIB_PATH)libft/libft.a
+GLFW	= $(LIB_PATH)glfw-3.4/src
+
 # Commands
 
-all: build run
+all: _libft $(OBJ_PATH) $(NAME)
 
-build:
-	@echo "$(BLUE)Building container...$(DEF_COLOR)"
-	@docker build -t $(NAME) .
-	@echo "$(GREEN)Container successfully built!$(DEF_COLOR)"
+$(NAME): $(OBJ)
+	$(CC) $(CC_FLAGS) $(OBJ) -L$(LIB_PATH)libft -lft -L$(GLFW) -o $(NAME) $(GRPHX_LIBS)
 
-run:
-	@echo "$(BLUE)Running program...$(DEF_COLOR)"
-	@docker run -it --rm --name my-running-app $(NAME)
-	@echo "$(GREEN)Program ended!$(DEF_COLOR)"
+$(OBJ_PATH)%.o: $(SRC_PATH)%.c
+	$(CC) $(CC_FLAGS) $(INCLUDE) -o $@ -c $<
 
-.PHONY: all build run
+$(OBJ_PATH):
+	@mkdir -p $(OBJ_PATH)
+
+_libft:
+	@make -C $(LIB_PATH)libft
+
+clean:
+	@make clean -C $(LIB_PATH)libft
+	rm -rf $(OBJ_PATH)
+
+fclean: clean
+	rm -rf $(LIBFT)
+	rm -rf $(NAME)
+
+re: fclean all
+
+leaks: re
+	$(VALGRIND) ./$(NAME) $(ARGS)
+
+.PHONY: all clean fclean re
