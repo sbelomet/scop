@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+         #
+#    By: sbelomet <sbelomet@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/11 13:18:10 by sbelomet          #+#    #+#              #
-#    Updated: 2025/02/12 14:37:05 by sbelomet         ###   ########.fr        #
+#    Updated: 2025/02/13 13:46:20 by sbelomet         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -44,7 +44,7 @@ INCLUDE		= -I include/ -I $(LIB_PATH)libft/include/ \
 
 # Files
 
-SRC_FILES = main.c glad.c
+SRC_FILES = main.c glad.c read_file.c
 OBJ_FILES = $(SRC_FILES:.c=.o)
 
 SRC		= $(addprefix $(SRC_PATH), $(SRC_FILES))

@@ -3,33 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: scherty <scherty@student.42.fr>            +#+  +:+       +#+        */
+/*   By: sbelomet <sbelomet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/11 13:17:04 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/02/13 05:09:41 by scherty          ###   ########.fr       */
+/*   Updated: 2025/02/13 14:25:19 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "scop.h"
-
-const char *vertexShaderSource = "#version 410 core\n"
-	"layout (location = 0) in vec3 aPos;\n"
-	"void main()\n"
-	"{\n"
-	"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-	"}\0";
-const char *fragmentShaderSource1 = "#version 410 core\n"
-	"out vec4 FragColor;\n"
-	"void main()\n"
-	"{\n"
-	"   FragColor = vec4(.1f, .6f, .9f, 1.0f);\n"
-	"}\n\0";
-const char *fragmentShaderSource2 = "#version 410 core\n"
-	"out vec4 FragColor;\n"
-	"void main()\n"
-	"{\n"
-	"   FragColor = vec4(.9f, .9f, 0.0f, 1.0f);\n"
-	"}\n\0";
 
 void processInput(GLFWwindow *window)
 {
@@ -37,7 +18,7 @@ void processInput(GLFWwindow *window)
 		glfwSetWindowShouldClose(window, GL_TRUE);
 }
 
-void framebuffer_size_callback(GLFWwindow*, int width, int height)
+void framebuffer_size_callback(GLFWwindow *, int width, int height)
 {
 	glViewport(0, 0, width, height);
 }
@@ -49,7 +30,7 @@ int main(int, char**)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	GLFWwindow* window = glfwCreateWindow(1280, 1000, "hihi", NULL, NULL);
+	GLFWwindow	*window = glfwCreateWindow(1280, 1000, "hihi", NULL, NULL);
 	if (window == NULL)
 	{
 		printf("Failed to create window\n");
@@ -65,9 +46,17 @@ int main(int, char**)
 		exit(-1);
 	}
 
+	int nbrAttributes;
+	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nbrAttributes);
+	printf("max nbr attributes: %d\n", nbrAttributes);
+
+	char	*vertexShaderSource = readFile("shaders/vertex_shader.glsl");
+	char	*fragmentShaderSource1 = readFile("shaders/fragment_shader1.glsl");
+	char	*fragmentShaderSource2 = readFile("shaders/fragment_shader2.glsl");
+	
 	unsigned int vertexShader;
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+	glShaderSource(vertexShader, 1, (const GLchar * const *)&vertexShaderSource, NULL);
 	glCompileShader(vertexShader);
 	int success;
 	char infoLog[512];
@@ -80,7 +69,7 @@ int main(int, char**)
 
 	unsigned int fragmentShaders[2];
 	fragmentShaders[0] = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShaders[0], 1, &fragmentShaderSource1, NULL);
+	glShaderSource(fragmentShaders[0], 1, (const GLchar * const *)&fragmentShaderSource1, NULL);
 	glCompileShader(fragmentShaders[0]);
 	glGetShaderiv(fragmentShaders[0], GL_COMPILE_STATUS, &success);
 	if (!success)
@@ -89,7 +78,7 @@ int main(int, char**)
 		printf("Fragment shader compilation error: %s\n", infoLog);
 	}
 	fragmentShaders[1] = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShaders[1], 1, &fragmentShaderSource2, NULL);
+	glShaderSource(fragmentShaders[1], 1, (const GLchar * const *)&fragmentShaderSource2, NULL);
 	glCompileShader(fragmentShaders[1]);
 	glGetShaderiv(fragmentShaders[1], GL_COMPILE_STATUS, &success);
 	if (!success)
@@ -97,6 +86,10 @@ int main(int, char**)
 		glGetShaderInfoLog(fragmentShaders[1], 512, NULL, infoLog);
 		printf("Fragment shader compilation error: %s\n", infoLog);
 	}
+
+	free(vertexShaderSource);
+	free(fragmentShaderSource1);
+	free(fragmentShaderSource2);
 
 	unsigned int shaderPrograms[2];
 	shaderPrograms[0] = glCreateProgram();
@@ -163,6 +156,12 @@ int main(int, char**)
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		glUseProgram(shaderPrograms[0]);
+
+		double timeValue = glfwGetTime();
+		float greenValue = (float)(sin(timeValue) / 2.0 + 0.5);
+		int vertexColorLocation = glGetUniformLocation(shaderPrograms[0], "ourColor");
+		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+
 		glBindVertexArray(VAOs[0]);
 		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
