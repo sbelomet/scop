@@ -6,7 +6,7 @@
 /*   By: sbelomet <sbelomet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/11 13:17:04 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/02/13 14:25:19 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/02/13 15:52:24 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,77 +50,14 @@ int main(int, char**)
 	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nbrAttributes);
 	printf("max nbr attributes: %d\n", nbrAttributes);
 
-	char	*vertexShaderSource = readFile("shaders/vertex_shader.glsl");
-	char	*fragmentShaderSource1 = readFile("shaders/fragment_shader1.glsl");
-	char	*fragmentShaderSource2 = readFile("shaders/fragment_shader2.glsl");
-	
-	unsigned int vertexShader;
-	vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, (const GLchar * const *)&vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
-	int success;
-	char infoLog[512];
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		printf("Vertex shader compilation error: %s\n", infoLog);
-	}
-
-	unsigned int fragmentShaders[2];
-	fragmentShaders[0] = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShaders[0], 1, (const GLchar * const *)&fragmentShaderSource1, NULL);
-	glCompileShader(fragmentShaders[0]);
-	glGetShaderiv(fragmentShaders[0], GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(fragmentShaders[0], 512, NULL, infoLog);
-		printf("Fragment shader compilation error: %s\n", infoLog);
-	}
-	fragmentShaders[1] = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShaders[1], 1, (const GLchar * const *)&fragmentShaderSource2, NULL);
-	glCompileShader(fragmentShaders[1]);
-	glGetShaderiv(fragmentShaders[1], GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(fragmentShaders[1], 512, NULL, infoLog);
-		printf("Fragment shader compilation error: %s\n", infoLog);
-	}
-
-	free(vertexShaderSource);
-	free(fragmentShaderSource1);
-	free(fragmentShaderSource2);
-
-	unsigned int shaderPrograms[2];
-	shaderPrograms[0] = glCreateProgram();
-	glAttachShader(shaderPrograms[0], vertexShader);
-	glAttachShader(shaderPrograms[0], fragmentShaders[0]);
-	glLinkProgram(shaderPrograms[0]);
-	glGetProgramiv(shaderPrograms[0], GL_LINK_STATUS, &success);
-	if (!success)
-	{
-		glGetProgramInfoLog(shaderPrograms[0], 512, NULL, infoLog);
-		printf("Shader program error: %s\n", infoLog);
-	}
-	
-	shaderPrograms[1] = glCreateProgram();
-	glAttachShader(shaderPrograms[1], vertexShader);
-	glAttachShader(shaderPrograms[1], fragmentShaders[1]);
-	glLinkProgram(shaderPrograms[1]);
-	glGetProgramiv(shaderPrograms[1], GL_LINK_STATUS, &success);
-	if (!success)
-	{
-		glGetProgramInfoLog(shaderPrograms[1], 512, NULL, infoLog);
-		printf("Shader program error: %s\n", infoLog);
-	}
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShaders[0]);
-	glDeleteShader(fragmentShaders[1]);
+	unsigned int myShader = ft_newShader("shaders/vertex_shader.glsl", "shaders/fragment_shader1.glsl");
+	unsigned int myShader2 = ft_newShader("shaders/vertex_shader.glsl", "shaders/fragment_shader2.glsl");
 
 	float vertices1[] = {
-		-0.5f, -0.5f, 0.0f, // left  
-		0.5f, -0.5f, 0.0f, // right 
-		0.0f,  0.5f, 0.0f  // top 
+		// positions        // colors
+		0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom right
+		-0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // bottom left
+		0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f // top
 	};
 	float vertices2[] = {
 		0.5f, -0.5f, 0.0f,
@@ -130,13 +67,15 @@ int main(int, char**)
 	unsigned int VBOs[2], VAOs[2];
 	glGenVertexArrays(2, VAOs);
 	glGenBuffers(2, VBOs);
-
+	// first triangle
 	glBindVertexArray(VAOs[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices1), vertices1, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0); //pos
 	glEnableVertexAttribArray(0);
-
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float))); //color
+    glEnableVertexAttribArray(1);
+	// second triangle
 	glBindVertexArray(VAOs[1]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices2), vertices2, GL_STATIC_DRAW);
@@ -155,20 +94,24 @@ int main(int, char**)
 		glClearColor(.7f, .3f, .1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glUseProgram(shaderPrograms[0]);
-
+		// first triangle
+		glUseProgram(myShader);
 		double timeValue = glfwGetTime();
+		float offset = (float)(sin(timeValue) / 2.0);
+		glUniform1f(glGetUniformLocation(myShader, "horiOffset"), offset);
+		glUniform1f(glGetUniformLocation(myShader, "vertiOffset"), offset);
+/* 		double timeValue = glfwGetTime();
 		float greenValue = (float)(sin(timeValue) / 2.0 + 0.5);
 		int vertexColorLocation = glGetUniformLocation(shaderPrograms[0], "ourColor");
-		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f); */
 
 		glBindVertexArray(VAOs[0]);
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
-		glUseProgram(shaderPrograms[1]);
+		// sencond triangle
+		/* glUseProgram(myShader2);
 		glBindVertexArray(VAOs[1]);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawArrays(GL_TRIANGLES, 0, 3); */
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -176,8 +119,8 @@ int main(int, char**)
 
 	glDeleteVertexArrays(2, VAOs);
 	glDeleteBuffers(2, VBOs);
-	glDeleteProgram(shaderPrograms[0]);
-	glDeleteProgram(shaderPrograms[1]);
+	glDeleteProgram(myShader);
+	glDeleteProgram(myShader2);
 
 	glfwTerminate();
 	return 0;
