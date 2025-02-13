@@ -6,7 +6,7 @@
 #    By: sbelomet <sbelomet@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/11 13:18:10 by sbelomet          #+#    #+#              #
-#    Updated: 2025/02/13 15:04:39 by sbelomet         ###   ########.fr        #
+#    Updated: 2025/02/13 17:22:34 by sbelomet         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -44,7 +44,7 @@ INCLUDE		= -I include/ -I $(LIB_PATH)libft/include/ \
 
 # Files
 
-SRC_FILES = main.c glad.c read_file.c shader_utils.c
+SRC_FILES = main.c glad.c read_file.c shader_utils.c stb_image.c
 OBJ_FILES = $(SRC_FILES:.c=.o)
 
 SRC		= $(addprefix $(SRC_PATH), $(SRC_FILES))
