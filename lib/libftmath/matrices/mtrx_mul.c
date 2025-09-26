@@ -1,0 +1,45 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   mtrx_mul.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sbelomet <sbelomet@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/18 15:54:07 by sbelomet          #+#    #+#             */
+/*   Updated: 2025/02/18 16:06:47 by sbelomet         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libftmath.h"
+
+t_mat4	ft_mat4_mul(const t_mat4 m1, const t_mat4 m2)
+{
+	int		i;
+	int		j;
+	int		k;
+	t_mat4	m;
+
+	i = -1;
+	while (++i < 4)
+	{
+		j = -1;
+		while (++j < 4)
+		{
+			k = -1;
+			m.m[i * 4 + j] = 0;
+			while (++k < 4)
+				m.m[i * 4 + j] += m1.m[i * 4 + k] * m2.m[k * 4 + j];
+		}
+	}
+	return (m);
+}
+
+t_mat4	ft_mat4_smul(t_mat4 m1, const float n)
+{
+	int	i;
+
+	i = -1;
+	while (++i < 16)
+		m1.m[i] *= n;
+	return (m1);
+}

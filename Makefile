@@ -6,7 +6,7 @@
 #    By: sbelomet <sbelomet@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/11 13:18:10 by sbelomet          #+#    #+#              #
-#    Updated: 2025/02/13 17:22:34 by sbelomet         ###   ########.fr        #
+#    Updated: 2025/02/18 12:20:55 by sbelomet         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,25 +39,25 @@ WHITE		= \033[0;97m
 SRC_PATH	= src/
 OBJ_PATH	= obj/
 LIB_PATH	= lib/
-INCLUDE		= -I include/ -I $(LIB_PATH)libft/include/ \
-			-I $(LIB_PATH)$(GLFW_NAME)/include
+INCLUDE		= -I include/ -I $(LIB_PATH)libft/include/  -I $(LIB_PATH)libftmath/include/ -I $(LIB_PATH)$(GLFW_NAME)/include
 
 # Files
 
 SRC_FILES = main.c glad.c read_file.c shader_utils.c stb_image.c
 OBJ_FILES = $(SRC_FILES:.c=.o)
 
-SRC		= $(addprefix $(SRC_PATH), $(SRC_FILES))
-OBJ		= $(addprefix $(OBJ_PATH), $(OBJ_FILES))
-LIBFT	= $(LIB_PATH)libft/libft.a
-GLFW	= $(LIB_PATH)$(GLFW_NAME)/src
+SRC			= $(addprefix $(SRC_PATH), $(SRC_FILES))
+OBJ			= $(addprefix $(OBJ_PATH), $(OBJ_FILES))
+LIBFT		= $(LIB_PATH)libft/libft.a
+LIBFTMATH	= $(LIB_PATH)libftmath/libftmath.a
+GLFW		= $(LIB_PATH)$(GLFW_NAME)/src
 
 # Commands
 
-all: _libft _glfw $(OBJ_PATH) $(NAME)
+all: _libft _libftmath _glfw $(OBJ_PATH) $(NAME)
 
 $(NAME): $(OBJ)
-	$(CC) $(CC_FLAGS) $(OBJ) -L$(LIB_PATH)libft -lft -L$(GLFW) $(LINK_LIBS) -o $(NAME)
+	$(CC) $(CC_FLAGS) $(OBJ) -L$(LIB_PATH)libft -lft -L$(LIB_PATH)libftmath -lftmath -L$(GLFW) $(LINK_LIBS) -o $(NAME)
 
 $(OBJ_PATH)%.o: $(SRC_PATH)%.c
 	$(CC) $(CC_FLAGS) $(INCLUDE) -o $@ -c $<
@@ -68,17 +68,22 @@ $(OBJ_PATH):
 _libft:
 	@make -C $(LIB_PATH)libft
 
+_libftmath:
+	@make -C $(LIB_PATH)libftmath
+
 _glfw:
 	@cmake -S $(LIB_PATH)$(GLFW_NAME) -B $(LIB_PATH)$(GLFW_NAME)
 	@make -C $(LIB_PATH)$(GLFW_NAME)
 
 clean:
 	@make clean -C $(LIB_PATH)libft
+	@make clean -C $(LIB_PATH)libftmath
 	@make clean -C $(LIB_PATH)$(GLFW_NAME)
 	rm -rf $(OBJ_PATH)
 
 fclean: clean
 	rm -rf $(LIBFT)
+	rm -rf $(LIBFTMATH)
 	rm -rf $(GLFW)/libglfw3.a
 	rm -rf $(NAME)
 
