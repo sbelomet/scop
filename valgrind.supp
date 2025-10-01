@@ -1,0 +1,68 @@
+{
+   suppress all radeonsi leaks
+   Memcheck:Leak
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/dri/radeonsi_dri.so.*
+}
+
+{
+   suppress all X11 leaks
+   Memcheck:Leak
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.*
+}
+
+{
+   suppress all libLLVM-15 leaks
+   Memcheck:Leak
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libLLVM-15.so.*
+}
+
+{
+   suppress all GLIBC leaks
+   Memcheck:Leak
+   ...
+   fun:dlopen@@GLIBC_2.34
+}
+
+{
+   suppress all dynamic loader leaks
+   Memcheck:Leak
+   ...
+   fun:_dl_map_object
+}
+
+{
+   suppress all dlopen leaks
+   Memcheck:Leak
+   ...
+   fun:_dl_open
+}
+
+{
+   suppress glfwTerminate leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:malloc
+   fun:_dl_close_worker.part.0.isra.0
+   fun:_dl_close_worker
+   fun:_dl_close
+   fun:_dl_catch_exception
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlclose@@GLIBC_2.34
+   fun:_glfwPlatformFreeModule
+   fun:_glfwTerminateGLX
+   fun:_glfwTerminateX11
+   fun:terminate
+   fun:glfwTerminate
+}
+
+{
+   suppress dynamic loader invalid read
+   Memcheck:Addr8
+   ...
+   fun:dl_open_worker
+}
