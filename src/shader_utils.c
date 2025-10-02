@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   shader_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sbelomet <sbelomet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 14:55:00 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/02/13 15:19:55 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/10/02 11:38:10 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,12 @@
 
 unsigned int	ft_newShader(const char *vertexPath, const char *fragmentPath)
 {
-	char	*vertexShaderSource = readFile(vertexPath);
-	char	*fragmentShaderSource = readFile(fragmentPath);
+	char	*vertexShaderSource;
+	char	*fragmentShaderSource;
+
+	// Read shader files, check for errors
+	vertexShaderSource = readFile(vertexPath);
+	fragmentShaderSource = readFile(fragmentPath);
 	if (!vertexShaderSource || !fragmentShaderSource)
 		printf("Shader files not successfully read\n");
 	
@@ -23,6 +27,7 @@ unsigned int	ft_newShader(const char *vertexPath, const char *fragmentPath)
 	int success;
 	char infoLog[512];
 
+	// Create and compile vertex shader, check for errors
 	vertex = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertex, 1, (const GLchar * const *)&vertexShaderSource, NULL);
 	glCompileShader(vertex);
@@ -33,6 +38,7 @@ unsigned int	ft_newShader(const char *vertexPath, const char *fragmentPath)
 		printf("Vertex shader compilation error: %s\n", infoLog);
 	}
 
+	// Create and compile fragment shader, check for errors
 	fragment = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragment, 1, (const GLchar * const *)&fragmentShaderSource, NULL);
 	glCompileShader(fragment);
@@ -43,6 +49,7 @@ unsigned int	ft_newShader(const char *vertexPath, const char *fragmentPath)
 		printf("Fragment shader compilation error: %s\n", infoLog);
 	}
 
+	// Create shader program and link vertex and fragment shader, check for errors
 	unsigned int ID = glCreateProgram();
 	glAttachShader(ID, vertex);
 	glAttachShader(ID, fragment);
@@ -54,6 +61,7 @@ unsigned int	ft_newShader(const char *vertexPath, const char *fragmentPath)
 		printf("Shader program linking error: %s\n", infoLog);
 	}
 
+	// Delete useless shaders and free C strings
 	glDeleteShader(vertex);
 	glDeleteShader(fragment);
 	if (vertexShaderSource)

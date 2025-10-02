@@ -1,17 +1,15 @@
-#version 410 core
+#version 460 core
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aColor;
-layout (location = 2) in vec2 aTexCoord;
 
-uniform float horiOffset;
-uniform float vertiOffset;
-out vec3 ourColor;
-out vec2 TexCoord;
+uniform float horizontalOffset;
+
+out vec3 ourColor; // Output a color to the fragment shader
+out vec4 ourPos;
 
 void main()
 {
-    //gl_Position = vec4(aPos.x + horiOffset, aPos.y + vertiOffset / 1.5, aPos.z, 1.0);
-	gl_Position = vec4(aPos, 1.0);
+	ourPos = vec4(aPos.x + horizontalOffset, aPos.y, aPos.z, 1.0);
+	gl_Position = ourPos;
 	ourColor = aColor;
-	TexCoord = vec2(aTexCoord.x, aTexCoord.y);
 }

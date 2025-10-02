@@ -3,36 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sbelomet <sbelomet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/11 13:17:04 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/02/18 12:22:33 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/10/02 16:09:26 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "scop.h"
 
-float mixValue = 0.2f;
-
+//Checks for inputs and does what need to be done
 void processInput(GLFWwindow *window)
 {
+	// Close on ESC press
 	if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
-	
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-	{
-		mixValue += .01f;
-		if (mixValue >= 1.0f)
-			mixValue = 1.0f;
-	}
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-	{
-		mixValue -= .01f;
-		if (mixValue <= 0.0f)
-			mixValue = 0.0f;
-	}
 }
 
+//Resets viewport on window resize
 void framebuffer_size_callback(GLFWwindow *, int width, int height)
 {
 	glViewport(0, 0, width, height);
@@ -40,24 +28,27 @@ void framebuffer_size_callback(GLFWwindow *, int width, int height)
 
 int main(int, char**)
 {
+	// Init GLFW
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	GLFWwindow	*window = glfwCreateWindow(1280, 1000, "hihi", NULL, NULL);
+	// Create window
+	GLFWwindow	*window = glfwCreateWindow(1280, 1000, "Scop yupyup", NULL, NULL);
 	if (window == NULL)
 	{
-		printf("Failed to create window\n");
+		ft_putstr_fd("Failed to create window\n", 1);
 		glfwTerminate();
 		exit(-1);
 	}
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+	// Init GLAD
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
-		printf("Failed to initialize GLAD\n");
+		ft_putstr_fd("Failed to initialize GLAD\n", 1);
 		exit(-1);
 	}
 
@@ -65,138 +56,124 @@ int main(int, char**)
 	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nbrAttributes);
 	printf("max nbr attributes: %d\n", nbrAttributes);
 
-	unsigned int myShader = ft_newShader("shaders/vertex_shader.glsl", "shaders/fragment_shader1.glsl");
-	unsigned int myShader2 = ft_newShader("shaders/vertex_shader.glsl", "shaders/fragment_shader2.glsl");
+	// Create shader program
+	unsigned int shaderPrograms[2]; 
+	shaderPrograms[0] = ft_newShader("shaders/vertex_shader.glsl", "shaders/fragment_shader1.glsl");
+	shaderPrograms[1] = ft_newShader("shaders/vertex_shader.glsl", "shaders/fragment_shader2.glsl");
 
+	// Vertices for triangles
 	float vertices1[] = {
-		// positions      // colors         // texture coords
-		0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, // top right
-		0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, // bottom right
-		-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, // bottom left
-		-0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f // top left
+	//	 0.5f,  0.5f,  0.0f,
+	//	 0.5f, -0.5f,  0.0f,
+	//	-0.5f, -0.5f,  0.0f,
+	//	-0.5f,  0.5f,  0.0f
+		// positions       // colors
+		-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+		-0.25f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f
+		
 	};
-	unsigned int indices[] = {  
-        0, 1, 3, // first triangle
-        1, 2, 3  // second triangle
-    };
-	unsigned int VBOs[2], VAOs[2], EBO;
+	float vertices2[] = {
+		// positions       // colors
+		0.0f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+		0.25f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
+		0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f
+	};
+	unsigned int indices[] = {
+		0, 1, 3,
+		1, 2, 3
+	};
+
+	// Generate the Vertex Array Object, the Vertex Buffer Object and the Element Buffer Object
+	unsigned int VAOs[2], VBOs[2], EBO;
 	glGenVertexArrays(2, VAOs);
 	glGenBuffers(2, VBOs);
 	glGenBuffers(1, &EBO);
 
+	// Bind the VAO to set it up
 	glBindVertexArray(VAOs[0]);
+
+	// Bind the VBO and add the vertices to it
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices1), vertices1, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices1), vertices1, GL_STATIC_DRAW);
+
+	// Bind the EBO and add the indices to it
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0); //pos
+
+	// Add the attributes to the VAO
+	// position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+	// color attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+	// Unbind the VBO
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	// Unbind the VAO
+	glBindVertexArray(0);
+
+	glBindVertexArray(VAOs[1]);
+	glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices2), vertices2, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float))); //color
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float))); //texture
-	glEnableVertexAttribArray(2);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
 
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-	unsigned int texture1, texture2;
-	glGenTextures(1, &texture1);
-	glBindTexture(GL_TEXTURE_2D, texture1);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	int width, height, nrChannels;
-	unsigned char *data = stbi_load("textures/test_texture.jpg", &width, &height, &nrChannels, 0);
-	if (data)
+	// Wireframe: GL_LINE
+	// Filled: GL_FILL
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	
+	float offset = 0.0f;
+	// Main loop
+	while(!glfwWindowShouldClose(window))
 	{
-		GLenum format;
-		if (nrChannels == 1)
-			format = GL_RED;
-		else if (nrChannels == 3)
-			format = GL_RGB;
-		else if (nrChannels == 4)
-			format = GL_RGBA;
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-	{
-		printf("Failed to load texture1\n");
-	}
-	stbi_image_free(data);
-
-	glGenTextures(1, &texture2);
-	glBindTexture(GL_TEXTURE_2D, texture2);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	data = stbi_load("textures/texture1.jpg", &width, &height, &nrChannels, 0);
-	if (data)
-	{
-		GLenum format;
-		if (nrChannels == 1)
-			format = GL_RED;
-		else if (nrChannels == 3)
-			format = GL_RGB;
-		else if (nrChannels == 4)
-			format = GL_RGBA;
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-	{
-		printf("Failed to load texture2\n");
-	}
-	stbi_image_free(data);
-
-	glUseProgram(myShader);
-	glUniform1i(glGetUniformLocation(myShader, "texture1"), 0);
-	glUniform1i(glGetUniformLocation(myShader, "texture2"), 1);
-
-	while (!glfwWindowShouldClose(window))
-	{
+		// Input
 		processInput(window);
 
-		glClearColor(.7f, .3f, .1f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		// Background color
+		glClearColor(0.7f, 0.3f, 0.1f, 1.0f);
+   		glClear(GL_COLOR_BUFFER_BIT);
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture1);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, texture2);
-		glUniform1f(glGetUniformLocation(myShader, "mixValue"), mixValue);
+		//float timeValue = glfwGetTime();
+		offset+= 0.001f;
+		
+		// Draw triangles
+		glUseProgram(shaderPrograms[0]);
+		int vertexColorLocation = glGetUniformLocation(shaderPrograms[0], "horizontalOffset");
+		glUniform1f(vertexColorLocation, offset); 
+        glBindVertexArray(VAOs[0]);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
 
-		glUseProgram(myShader);
-		double timeValue = glfwGetTime();
-		float offset = (float)(sin(timeValue) / 2.0);
-		glUniform1f(glGetUniformLocation(myShader, "horiOffset"), offset);
-		glUniform1f(glGetUniformLocation(myShader, "vertiOffset"), offset);
-/* 		double timeValue = glfwGetTime();
-		float greenValue = (float)(sin(timeValue) / 2.0 + 0.5);
-		int vertexColorLocation = glGetUniformLocation(shaderPrograms[0], "ourColor");
+		glUseProgram(shaderPrograms[1]);
+		vertexColorLocation = glGetUniformLocation(shaderPrograms[1], "horizontalOffset");
+		glUniform1f(vertexColorLocation, offset); 
+		/* float timeValue = glfwGetTime();
+		float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
+		int vertexColorLocation = glGetUniformLocation(shaderPrograms[1], "ourColor");
 		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f); */
+        glBindVertexArray(VAOs[1]);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		// glBindVertexArray(0); // no need to unbind it every time
 
-		glBindVertexArray(VAOs[0]);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-		// sencond triangle
-		/* glUseProgram(myShader2);
-		glBindVertexArray(VAOs[1]);
-		glDrawArrays(GL_TRIANGLES, 0, 3); */
-
+		// Swap the buffers and check and call events
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
-
+	
+	// Cleaning
 	glDeleteVertexArrays(2, VAOs);
-	glDeleteBuffers(2, VBOs);
-	glDeleteBuffers(1, &EBO);
-	glDeleteProgram(myShader);
-	glDeleteProgram(myShader2);
-
-	glfwTerminate();
+    glDeleteBuffers(2, VBOs);
+    glDeleteProgram(shaderPrograms[0]);
+    glDeleteProgram(shaderPrograms[1]);
+	
+	// Stop GLFW
+	glfwTerminate(); 
 	return 0;
 }

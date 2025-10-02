@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: sbelomet <sbelomet@student.42.fr>          +#+  +:+       +#+         #
+#    By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/11 13:18:10 by sbelomet          #+#    #+#              #
-#    Updated: 2025/02/18 12:20:55 by sbelomet         ###   ########.fr        #
+#    Updated: 2025/10/02 11:49:31 by sbelomet         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ CC			= gcc
 CC_FLAGS	= -Wall -Wextra -Werror -g3
 GLFW_NAME	= glfw-3.4
 LINK_LIBS	= -lglfw3 -lGL -lX11 -lpthread -lXrandr -lXi -ldl -lm
-VALGRIND	= valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes
+VALGRIND	= valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --suppressions=valgrind.supp
 ARGS		= 0
 
 # Colors
@@ -89,7 +89,14 @@ fclean: clean
 
 re: fclean all
 
-leaks: re
+cleanfast:
+	rm -rf $(LIBFT)
+	rm -rf $(LIBFTMATH)
+	rm -rf $(NAME)
+
+refast: cleanfast _libft _libftmath $(OBJ_PATH) $(NAME)
+
+leaks: refast
 	$(VALGRIND) ./$(NAME) $(ARGS)
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re leaks refast cleanfast
