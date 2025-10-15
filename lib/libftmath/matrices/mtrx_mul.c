@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mtrx_mul.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sbelomet <sbelomet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 15:54:07 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/02/18 16:06:47 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/10/15 15:37:42 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,23 @@ t_mat4	ft_mat4_mul(const t_mat4 m1, const t_mat4 m2)
 		}
 	}
 	return (m);
+}
+
+t_vec4	ft_mat4_vec4_mul(const t_mat4 m, const t_vec4 v)
+{
+	t_vec4	result;
+	int		i;
+	int		j;
+
+	i = -1;
+	while (++i < 4)
+	{
+		result.v[i] = 0;
+		j = -1;
+		while (++j < 4)
+			result.v[i] += m.m[i * 4 + j] * v.v[j];
+	}
+	return (result);
 }
 
 t_mat4	ft_mat4_smul(t_mat4 m1, const float n)

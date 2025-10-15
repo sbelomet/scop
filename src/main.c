@@ -6,7 +6,7 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/11 13:17:04 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/10/15 11:43:04 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/10/15 15:44:27 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,9 +68,10 @@ int main(int, char**)
 		exit(-1);
 	}
 	
-	int nbrAttributes;
-	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nbrAttributes);
-	printf("max nbr attributes: %d\n", nbrAttributes);
+	t_vec4 vec = ft_vec4(1.0f, 0.0f, 0.0f, 1.0f);
+	t_mat4 trans = ft_mat4_trans(ft_vec4(1.0f, 1.0f, 0.0f, 1.0f));
+	vec = ft_mat4_vec4_mul(trans, vec);
+	ft_print_vec4(vec, "vec");
 	
 	// ---- SHADERS ----
 	

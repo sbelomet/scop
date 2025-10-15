@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libftmath.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sbelomet <sbelomet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 11:52:54 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/02/18 16:07:49 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/10/15 15:35:36 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,5 +71,10 @@ t_mat4	ft_mat4_add(t_mat4 m1, const t_mat4 m2);
 t_mat4	ft_mat4_sadd(t_mat4 m1, const float n);
 t_mat4	ft_mat4_sub(t_mat4 m1, const t_mat4 m2);
 t_mat4	ft_mat4_ssub(t_mat4 m1, const float n);
+t_mat4	ft_mat4_mul(const t_mat4 m1, const t_mat4 m2);
+t_vec4	ft_mat4_vec4_mul(const t_mat4 m, const t_vec4 v);
+t_vec4	ft_mat4_vec4_mul(const t_mat4 m, const t_vec4 v);
+
+t_mat4	ft_mat4_trans(const t_vec4 trans);
 
 #endif
