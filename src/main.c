@@ -6,11 +6,13 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/11 13:17:04 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/10/14 15:58:31 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/10/15 11:43:04 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "scop.h"
+
+float mixValue = 0.2f;
 
 //Checks for inputs and does what need to be done
 void processInput(GLFWwindow *window)
@@ -18,6 +20,18 @@ void processInput(GLFWwindow *window)
 	// Close on ESC press
 	if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
+	if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+	{
+		mixValue += 0.05f;
+		if(mixValue >= 1.0f)
+			mixValue = 1.0f;
+	}
+	if(glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+	{
+		mixValue -= 0.05f;
+		if(mixValue <= 0.0f)
+			mixValue = 0.0f;
+	}
 }
 
 //Resets viewport on window resize
@@ -53,12 +67,16 @@ int main(int, char**)
 		ft_putstr_fd("Failed to initialize GLAD\n", 1);
 		exit(-1);
 	}
-
+	
 	int nbrAttributes;
 	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nbrAttributes);
 	printf("max nbr attributes: %d\n", nbrAttributes);
-
+	
 	// ---- SHADERS ----
+	
+	// Enable the use of alpha
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Create shader program
 	unsigned int shaderProgram; 
@@ -69,10 +87,10 @@ int main(int, char**)
 	// Vertices for triangles
 	float vertices[] = {
 		 // positions         // colors            // tex coords
-		 0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
-		 0.5f, -0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
-		-0.5f, -0.5f,  0.0f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
-		-0.5f,  0.5f,  0.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f
+		 0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+		 0.5f, -0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
+		-0.5f, -0.5f,  0.0f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
+		-0.5f,  0.5f,  0.0f,  1.0f,  1.0f,  0.0f,  0.0f,  0.0f
 		
 	};
 	unsigned int indices[] = {
@@ -123,25 +141,48 @@ int main(int, char**)
 	// ---- TEXTURES ----
 
 	// Generate texture
-	unsigned int texture;
-	glGenTextures(1, &texture);
+	unsigned int textures[2];
+	glGenTextures(2, textures);
 
 	// Bind the texture and set its options
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glBindTexture(GL_TEXTURE_2D, textures[0]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
+	
 	// Load image and apply it to the texture
 	int width, height, nrChannels;
-	unsigned char *data = stbi_load("textures/texture1.jpg", &width, &height, &nrChannels, 0);
+	unsigned char *data = stbi_load("textures/texture2.jpg", &width, &height, &nrChannels, 0);
 	if (!data)
 		ft_putstr_fd("Failed to load image", 1);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	stbi_image_free(data);
+
+	glBindTexture(GL_TEXTURE_2D, textures[1]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	data = stbi_load("textures/yugiohcard.png", &width, &height, &nrChannels, 0);
+	if (!data)
+		ft_putstr_fd("Failed to load image", 1);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	if (nrChannels == 4)
+    	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	else if (nrChannels == 3)
+    	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	stbi_image_free(data);
+
+	glUseProgram(shaderProgram);
+	glUniform1i(glGetUniformLocation(shaderProgram, "texture1"), 0);
+	glUniform1i(glGetUniformLocation(shaderProgram, "texture2"), 1);
 	
+
 	// ---- MAIN LOOP ----
 	while(!glfwWindowShouldClose(window))
 	{
@@ -154,8 +195,11 @@ int main(int, char**)
 		
 		// Draw triangles
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture);
+        glBindTexture(GL_TEXTURE_2D, textures[0]);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, textures[1]);
 		glUseProgram(shaderProgram);
+		glUniform1f(glGetUniformLocation(shaderProgram, "mixValue"), mixValue);
         glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
