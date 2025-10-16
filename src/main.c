@@ -6,7 +6,7 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/11 13:17:04 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/10/15 15:44:27 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/10/16 16:06:15 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,12 +67,7 @@ int main(int, char**)
 		ft_putstr_fd("Failed to initialize GLAD\n", 1);
 		exit(-1);
 	}
-	
-	t_vec4 vec = ft_vec4(1.0f, 0.0f, 0.0f, 1.0f);
-	t_mat4 trans = ft_mat4_trans(ft_vec4(1.0f, 1.0f, 0.0f, 1.0f));
-	vec = ft_mat4_vec4_mul(trans, vec);
-	ft_print_vec4(vec, "vec");
-	
+
 	// ---- SHADERS ----
 	
 	// Enable the use of alpha
@@ -182,7 +177,15 @@ int main(int, char**)
 	glUseProgram(shaderProgram);
 	glUniform1i(glGetUniformLocation(shaderProgram, "texture1"), 0);
 	glUniform1i(glGetUniformLocation(shaderProgram, "texture2"), 1);
+
+	t_mat4 transl = ft_mat4_transl(ft_vec4(0.5f, -0.5f, 0.0f, 0.0f));
+	t_mat4 rot = ft_mat4_rot(ft_vec3(0.0f, 0.0f, 1.0f), ft_deg_to_rad(90.0f));
+	//t_mat4 scale = ft_mat4_scale(ft_vec3(0.5, 0.5, 0.5));
+	t_mat4 trans = ft_mat4_mul(transl, rot);
 	
+
+	unsigned int transformLoc = glGetUniformLocation(shaderProgram,"transform");
+	glUniformMatrix4fv(transformLoc, 1, GL_TRUE, trans.m);
 
 	// ---- MAIN LOOP ----
 	while(!glfwWindowShouldClose(window))
@@ -193,6 +196,14 @@ int main(int, char**)
 		// Background color
 		glClearColor(0.7f, 0.3f, 0.1f, 1.0f);
    		glClear(GL_COLOR_BUFFER_BIT);
+		t_mat4 transl = ft_mat4_transl(ft_vec4(0.5f, -0.5f, 0.0f, 0.0f));
+		t_mat4 rot = ft_mat4_rot(ft_vec3(0.0f, 0.0f, 1.0f), (float)glfwGetTime());
+		//t_mat4 scale = ft_mat4_scale(ft_vec3(0.5, 0.5, 0.5));
+		t_mat4 trans = ft_mat4_mul(transl, rot);
+		
+
+		unsigned int transformLoc = glGetUniformLocation(shaderProgram,"transform");
+		glUniformMatrix4fv(transformLoc, 1, GL_TRUE, trans.m);
 		
 		// Draw triangles
 		glActiveTexture(GL_TEXTURE0);

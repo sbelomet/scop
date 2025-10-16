@@ -6,15 +6,19 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 11:52:54 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/10/15 15:35:36 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/10/16 14:18:57 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBFTMATH_H
 # define LIBFTMATH_H
 
-#include <stdio.h>
-#include <math.h>
+# include <stdio.h>
+# include <math.h>
+
+# ifndef M_PI
+#  define M_PI 3.14159265358979323846264338327950288
+# endif
 
 /* Structures */
 typedef struct	s_vec3
@@ -33,6 +37,10 @@ typedef struct	s_mat4
 }				t_mat4;
 
 /* Functions */
+
+double	ft_deg_to_rad(double deg);
+double	ft_rad_to_deg(double rad);
+
 t_vec3	ft_vec3(const float x, const float y, const float z);
 t_vec4	ft_vec4(const float x, const float y, const float z, const float w);
 t_mat4	ft_mat4(void);
@@ -75,6 +83,8 @@ t_mat4	ft_mat4_mul(const t_mat4 m1, const t_mat4 m2);
 t_vec4	ft_mat4_vec4_mul(const t_mat4 m, const t_vec4 v);
 t_vec4	ft_mat4_vec4_mul(const t_mat4 m, const t_vec4 v);
 
-t_mat4	ft_mat4_trans(const t_vec4 trans);
+t_mat4	ft_mat4_transl(const t_vec4 transl);
+t_mat4	ft_mat4_scale(const t_vec3 scale);
+t_mat4	ft_mat4_rot(t_vec3 rot_axis, const float angle);
 
 #endif

@@ -6,27 +6,37 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 14:16:23 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/10/15 16:17:01 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/10/16 14:09:59 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libftmath.h"
 
-t_mat4	ft_mat4_trans(const t_vec4 trans)
+t_mat4	ft_mat4_transl(const t_vec4 transl)
 {
 	t_mat4	table;
 
 	table = ft_mat4();
-	table.m[3] = trans.v[0];
-	table.m[7] = trans.v[1];
-	table.m[11] = trans.v[2];
+	table.m[3] = transl.v[0];
+	table.m[7] = transl.v[1];
+	table.m[11] = transl.v[2];
 	return (table);
 }
 
-t_mat4	rotation_matrix(t_vec3 rot_axis, const float angle)
+t_mat4	ft_mat4_scale(const t_vec3 scale)
+{
+	t_mat4	table;
+
+	table = ft_mat4();
+	table.m[0] = scale.v[0];
+	table.m[5] = scale.v[1];
+	table.m[10] = scale.v[2];
+	return (table);
+}
+
+t_mat4	ft_mat4_rot(t_vec3 rot_axis, const float angle)
 {
 	t_mat4	full_rotation;
-	t_vec3	axis;
 	double	c;
 	double	s;
 	double	t;
