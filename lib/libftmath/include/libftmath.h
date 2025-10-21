@@ -6,7 +6,7 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 11:52:54 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/10/16 14:18:57 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/10/21 15:15:19 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,5 +86,7 @@ t_vec4	ft_mat4_vec4_mul(const t_mat4 m, const t_vec4 v);
 t_mat4	ft_mat4_transl(const t_vec4 transl);
 t_mat4	ft_mat4_scale(const t_vec3 scale);
 t_mat4	ft_mat4_rot(t_vec3 rot_axis, const float angle);
+
+t_mat4	ft_mat4_persp(const float fov, const float asp_ratio, const float near, const float far);
 
 #endif

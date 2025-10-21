@@ -6,7 +6,7 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/11 13:17:04 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/10/21 12:04:07 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/10/21 16:12:07 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ int main(int, char**)
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Create window
-	GLFWwindow	*window = glfwCreateWindow(1280, 1000, "Scop yupyup", NULL, NULL);
+	GLFWwindow	*window = glfwCreateWindow(WIDTH, HEIGHT, "Scop yupyup", NULL, NULL);
 	if (window == NULL)
 	{
 		ft_putstr_fd("Failed to create window\n", 1);
@@ -93,6 +93,7 @@ int main(int, char**)
 		0, 1, 3,
 		1, 2, 3
 	};
+
 
 	// ---- VAO, VBO, EBO ----
 
@@ -178,14 +179,10 @@ int main(int, char**)
 	glUniform1i(glGetUniformLocation(shaderProgram, "texture1"), 0);
 	glUniform1i(glGetUniformLocation(shaderProgram, "texture2"), 1);
 
-	t_mat4 transl = ft_mat4_transl(ft_vec4(0.5f, -0.5f, 0.0f, 0.0f));
-	t_mat4 rot = ft_mat4_rot(ft_vec3(0.0f, 0.0f, 1.0f), ft_deg_to_rad(90.0f));
-	//t_mat4 scale = ft_mat4_scale(ft_vec3(0.5, 0.5, 0.5));
-	t_mat4 trans = ft_mat4_mul(transl, rot);
-	
-
-	unsigned int transformLoc = glGetUniformLocation(shaderProgram,"transform");
-	glUniformMatrix4fv(transformLoc, 1, GL_TRUE, trans.m);
+	t_mat4 proj = ft_mat4_persp(ft_deg_to_rad(45.0f), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
+	ft_print_mat4(proj, "proj");
+	t_mat4 mod = ft_mat4_rot(ft_vec3(1.0f, 0.0f, 0.0f), ft_deg_to_rad(-55.0f));
+	ft_print_mat4(mod, "mod");
 
 	// ---- MAIN LOOP ----
 	while(!glfwWindowShouldClose(window))
@@ -196,13 +193,6 @@ int main(int, char**)
 		// Background color
 		glClearColor(0.7f, 0.3f, 0.1f, 1.0f);
    		glClear(GL_COLOR_BUFFER_BIT);
-
-		// Transform matrix
-		t_mat4 transl = ft_mat4_transl(ft_vec4(0.5f, -0.5f, 0.0f, 0.0f));
-		t_mat4 rot = ft_mat4_rot(ft_vec3(0.0f, 0.0f, 1.0f), (float)glfwGetTime());
-		t_mat4 trans = ft_mat4_mul(transl, rot);
-		unsigned int transformLoc = glGetUniformLocation(shaderProgram,"transform");
-		glUniformMatrix4fv(transformLoc, 1, GL_TRUE, trans.m);
 		
 		// Draw triangles
 		glActiveTexture(GL_TEXTURE0);
@@ -211,14 +201,24 @@ int main(int, char**)
         glBindTexture(GL_TEXTURE_2D, textures[1]);
 		glUseProgram(shaderProgram);
 		glUniform1f(glGetUniformLocation(shaderProgram, "mixValue"), mixValue);
-        glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-		transl = ft_mat4_transl(ft_vec4(-0.5f, 0.5f, 0.0f, 0.0f));
-		t_mat4 scale = ft_mat4_scale(ft_vec3(sin(glfwGetTime()), sin(glfwGetTime()), sin(glfwGetTime())));
-		trans = ft_mat4_mul(transl, scale);
-		transformLoc = glGetUniformLocation(shaderProgram,"transform");
-		glUniformMatrix4fv(transformLoc, 1, GL_TRUE, trans.m);
+
+/* 		t_mat4 model = ft_mat4_mul(
+			ft_mat4_rot(ft_vec3(1.0f, 0.0f, 0.0f), ft_deg_to_rad(-55.0f)),
+			ft_mat4_scale(ft_vec3(0.04f, 0.04f, 0.04f))
+		); */
+		t_mat4 model = ft_mat4_rot(ft_vec3(1.0f, 0.0f, 0.0f), ft_deg_to_rad(-55.0f));
+		t_mat4 view = ft_mat4_transl(ft_vec4(0.0f, 0.0f, -3.0f, 0.0f));
+		t_mat4 projection = ft_mat4_persp(ft_deg_to_rad(45.0f), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
+
+		unsigned int modelLoc = glGetUniformLocation(shaderProgram,"model");
+		glUniformMatrix4fv(modelLoc, 1, GL_TRUE, model.m);
+		unsigned int viewLoc = glGetUniformLocation(shaderProgram,"view");
+		glUniformMatrix4fv(viewLoc, 1, GL_TRUE, view.m);
+		unsigned int projectionLoc = glGetUniformLocation(shaderProgram,"projection");
+		glUniformMatrix4fv(projectionLoc, 1, GL_TRUE, projection.m);
+
+        glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		// Swap the buffers and check and call events

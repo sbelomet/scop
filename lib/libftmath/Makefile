@@ -6,7 +6,7 @@
 #    By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/18 11:54:51 by sbelomet          #+#    #+#              #
-#    Updated: 2025/10/16 14:10:54 by sbelomet         ###   ########.fr        #
+#    Updated: 2025/10/21 14:29:39 by sbelomet         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,7 +24,7 @@ VCTR_DIR	=	vectors/
 ANG_DIR		=	angles/
 OBJS_DIR	=	objs/
 
-F_MTRX		=	mtrx_new mtrx_print mtrx_add mtrx_sub mtrx_mul mtrx_transforms
+F_MTRX		=	mtrx_new mtrx_print mtrx_add mtrx_sub mtrx_mul mtrx_transforms mtrx_projections
 F_VCTR		=	vctr_new vctr_print vctr_add vctr_sub vctr_mul vctr_div vctr_len vctr_dot vctr_cross vctr_normalize
 F_ANG		=	ang_conv
 
