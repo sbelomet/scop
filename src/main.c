@@ -6,7 +6,7 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/11 13:17:04 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/10/16 16:06:15 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/10/21 12:04:07 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,12 +196,11 @@ int main(int, char**)
 		// Background color
 		glClearColor(0.7f, 0.3f, 0.1f, 1.0f);
    		glClear(GL_COLOR_BUFFER_BIT);
+
+		// Transform matrix
 		t_mat4 transl = ft_mat4_transl(ft_vec4(0.5f, -0.5f, 0.0f, 0.0f));
 		t_mat4 rot = ft_mat4_rot(ft_vec3(0.0f, 0.0f, 1.0f), (float)glfwGetTime());
-		//t_mat4 scale = ft_mat4_scale(ft_vec3(0.5, 0.5, 0.5));
 		t_mat4 trans = ft_mat4_mul(transl, rot);
-		
-
 		unsigned int transformLoc = glGetUniformLocation(shaderProgram,"transform");
 		glUniformMatrix4fv(transformLoc, 1, GL_TRUE, trans.m);
 		
@@ -213,6 +212,13 @@ int main(int, char**)
 		glUseProgram(shaderProgram);
 		glUniform1f(glGetUniformLocation(shaderProgram, "mixValue"), mixValue);
         glBindVertexArray(VAO);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+		transl = ft_mat4_transl(ft_vec4(-0.5f, 0.5f, 0.0f, 0.0f));
+		t_mat4 scale = ft_mat4_scale(ft_vec3(sin(glfwGetTime()), sin(glfwGetTime()), sin(glfwGetTime())));
+		trans = ft_mat4_mul(transl, scale);
+		transformLoc = glGetUniformLocation(shaderProgram,"transform");
+		glUniformMatrix4fv(transformLoc, 1, GL_TRUE, trans.m);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		// Swap the buffers and check and call events
