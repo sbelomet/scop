@@ -6,13 +6,13 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 14:16:23 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/10/16 14:09:59 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/10/22 11:22:09 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libftmath.h"
 
-t_mat4	ft_mat4_transl(const t_vec4 transl)
+t_mat4	ft_mat4_transl(const t_vec3 transl)
 {
 	t_mat4	table;
 
