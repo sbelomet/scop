@@ -6,13 +6,14 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 14:09:54 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/10/21 16:13:13 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/10/22 13:16:23 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libftmath.h"
 
-t_mat4	ft_mat4_persp(const float fov, const float asp_ratio, const float near, const float far)
+t_mat4	ft_mat4_persp(const float fov, const float asp_ratio,
+	const float near, const float far)
 {
 	t_mat4	table;
 	float	s_factor;

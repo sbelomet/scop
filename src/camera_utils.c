@@ -1,24 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   vctr_cross.c                                       :+:      :+:    :+:   */
+/*   camera_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/18 14:02:02 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/10/22 16:04:02 by sbelomet         ###   ########.fr       */
+/*   Created: 2025/10/22 13:23:01 by sbelomet          #+#    #+#             */
+/*   Updated: 2025/10/22 13:09:49 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libftmath.h"
+#include "scop.h"
 
-t_vec3	ft_vec3_cross(const t_vec3 v1, const t_vec3 v2)
+t_mat4	ft_lookat(const t_vec3 camPos, const t_vec3 targetPos, const t_vec3 worldUp)
 {
-	t_vec3	v;
-
-	v = ft_vec3_null();
-	v.v[0] = v1.v[1] * v2.v[2] - v1.v[2] * v2.v[1];
-	v.v[1] = v1.v[2] * v2.v[0] - v1.v[0] * v2.v[2];
-	v.v[2] = v1.v[0] * v2.v[1] - v1.v[1] * v2.v[0];
-	return (v);
+	t_vec3	cam_dir = ft_vec3_normalize(ft_vec3_sub(camPos, targetPos));
 }
