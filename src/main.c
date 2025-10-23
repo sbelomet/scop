@@ -6,7 +6,7 @@
 /*   By: sbelomet <sbelomet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/11 13:17:04 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/10/23 15:30:56 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/10/23 17:04:27 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ void processInput(GLFWwindow *window)
 			mixValue = 0.0f;
 	}
 	float cameraSpeed = 2.5f * deltaTime;
+	float temp = cameraPos.v[1];
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		cameraPos = ft_vec3_add(cameraPos, ft_vec3_smul(cameraFront, cameraSpeed));
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -53,6 +54,7 @@ void processInput(GLFWwindow *window)
 		cameraPos = ft_vec3_sub(cameraPos, ft_vec3_smul(ft_vec3_normalize(ft_vec3_cross(cameraFront, cameraUp)), cameraSpeed));
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		cameraPos = ft_vec3_add(cameraPos, ft_vec3_smul(ft_vec3_normalize(ft_vec3_cross(cameraFront, cameraUp)), cameraSpeed));
+	cameraPos.v[1] = temp;
 }
 
 //Checks for mouse inputs and does what need to be done
