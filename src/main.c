@@ -3,18 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
+/*   By: sbelomet <sbelomet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/11 13:17:04 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/10/22 11:53:52 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/10/23 15:30:56 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "scop.h"
 
-float mixValue = 0.2f;
+float	mixValue = 0.2f;
 
-//Checks for inputs and does what need to be done
+t_vec3	cameraPos, cameraFront, cameraUp;
+
+int		firstMouse = GL_TRUE;
+float	yaw = -90.0f;
+float	pitch = 0.0f;
+float	lastX = WIDTH / 2;
+float	lastY = HEIGHT / 2;
+float	fov = 45.0f;
+
+float	deltaTime = 0.0f;
+float	lastFrame = 0.0f;
+
+//Checks for keyboard inputs and does what need to be done
 void processInput(GLFWwindow *window)
 {
 	// Close on ESC press
@@ -32,6 +44,58 @@ void processInput(GLFWwindow *window)
 		if(mixValue <= 0.0f)
 			mixValue = 0.0f;
 	}
+	float cameraSpeed = 2.5f * deltaTime;
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		cameraPos = ft_vec3_add(cameraPos, ft_vec3_smul(cameraFront, cameraSpeed));
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		cameraPos = ft_vec3_sub(cameraPos, ft_vec3_smul(cameraFront, cameraSpeed));
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		cameraPos = ft_vec3_sub(cameraPos, ft_vec3_smul(ft_vec3_normalize(ft_vec3_cross(cameraFront, cameraUp)), cameraSpeed));
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		cameraPos = ft_vec3_add(cameraPos, ft_vec3_smul(ft_vec3_normalize(ft_vec3_cross(cameraFront, cameraUp)), cameraSpeed));
+}
+
+//Checks for mouse inputs and does what need to be done
+void	mouse_callback(GLFWwindow *, double xpos, double ypos)
+{
+	if (firstMouse)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = GL_FALSE;
+	}
+
+	float	xoffset = xpos - lastX;
+	float	yoffset = lastY - ypos;
+	lastX = xpos;
+	lastY = ypos;
+
+	float	sensitivity = 0.1f;
+	xoffset *= sensitivity;
+	yoffset *= sensitivity;
+
+	yaw += xoffset;
+	pitch += yoffset;
+
+	if (pitch > 89.0f)
+		pitch = 89.0f;
+	if (pitch < -89.0f)
+		pitch = -89.0f;
+	
+	t_vec3	direction;
+	direction.v[0] = cos(ft_deg_to_rad(yaw)) * cos(ft_deg_to_rad(pitch));
+	direction.v[1] = sin(ft_deg_to_rad(pitch));
+	direction.v[2] = sin(ft_deg_to_rad(yaw)) * cos(ft_deg_to_rad(pitch));
+	cameraFront = ft_vec3_normalize(direction);
+}
+
+void	scroll_callback(GLFWwindow *, double, double yoffset)
+{
+	fov -= (float)yoffset;
+	if (fov < 1.0f)
+		fov = 1.0f;
+	if (fov > 45.0f)
+		fov = 45.0f;
 }
 
 //Resets viewport on window resize
@@ -43,11 +107,14 @@ void framebuffer_size_callback(GLFWwindow *, int width, int height)
 int main(int, char**)
 {
 	// ---- INITIATIONS ----
+	cameraPos = ft_vec3(0.0f, 0.0f, 3.0f);
+	cameraFront = ft_vec3(0.0f, 0.0f, -1.0f);
+	cameraUp = ft_vec3(0.0f, 1.0f, 0.0f);
 
 	// Init GLFW
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Create window
@@ -60,6 +127,11 @@ int main(int, char**)
 	}
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetScrollCallback(window, scroll_callback);
+
+	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 
 	// Init GLAD
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -224,6 +296,10 @@ int main(int, char**)
 	// ---- MAIN LOOP ----
 	while(!glfwWindowShouldClose(window))
 	{
+		float currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
 		// Input
 		processInput(window);
 
@@ -239,9 +315,8 @@ int main(int, char**)
 		glUseProgram(shaderProgram);
 		glUniform1f(glGetUniformLocation(shaderProgram, "mixValue"), mixValue);
 
-
-		t_mat4 view = ft_mat4_transl(ft_vec3(0.0f, 0.0f, -3.0f));
-		t_mat4 projection = ft_mat4_persp(ft_deg_to_rad(45.0f), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
+		t_mat4 view = ft_lookat(cameraPos, ft_vec3_add(cameraPos, cameraFront), cameraUp);
+		t_mat4 projection = ft_mat4_persp(ft_deg_to_rad(fov), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
 
 		unsigned int modelLoc = glGetUniformLocation(shaderProgram,"model");
 		unsigned int viewLoc = glGetUniformLocation(shaderProgram,"view");
