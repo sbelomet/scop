@@ -6,7 +6,7 @@
 /*   By: sbelomet <sbelomet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/12 09:59:43 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/10/23 13:03:39 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/10/24 16:13:08 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,18 @@
 # define WIDTH 1280
 # define HEIGHT 1000
 
-/* Function prototypes */
+/* Structures */
+typedef struct	s_camera
+{
+	t_vec3	pos;
+	t_vec3	front;
+	t_vec3	up;
+	float	yaw;
+	float	pitch;
+	float	fov;
+}				t_camera;
 
+/* Function prototypes */
 char			*readFile(const char* filePath);
 
 unsigned int	ft_newShader(const char *vertexPath, const char *fragmentPath);
