@@ -6,7 +6,7 @@
 /*   By: sbelomet <sbelomet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/11 13:17:04 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/10/24 18:48:11 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/10/25 16:17:32 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,54 +155,66 @@ int main(int, char**)
 	unsigned int lightCubeShader = ft_newShader("shaders/light_vs.glsl", "shaders/light_fs.glsl");
 
 	// ---- COORDS ----
-
 	// Vertices for cube
 	float vertices[] = {
-		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        // positions          // normals           // texture coords
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
 
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-         0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
 
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
 
-         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+         0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
 
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
 
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
+	};
+
+	t_vec3 cubPos[] = {
+		ft_vec3( 0.0f, 0.0f, 0.0f),
+		ft_vec3( 2.0f, 5.0f, -15.0f),
+		ft_vec3(-1.5f, -2.2f, -2.5f),
+		ft_vec3(-3.8f, -2.0f, -12.3f),
+		ft_vec3( 2.4f, -0.4f, -3.5f),
+		ft_vec3(-1.7f, 3.0f, -7.5f),
+		ft_vec3( 1.3f, -2.0f, -2.5f),
+		ft_vec3( 1.5f, 2.0f, -2.5f),
+		ft_vec3( 1.5f, 0.2f, -1.5f),
+		ft_vec3(-1.3f, 1.0f, -1.5f)
 	};
 
 	// ---- VAO, VBO, EBO ----
-
 	// Generate the Vertex Array Object, the Vertex Buffer Object and the Element Buffer Object
 	unsigned int cubeVAO, VBO;
 	glGenVertexArrays(1, &cubeVAO);
@@ -217,17 +229,27 @@ int main(int, char**)
 
 	// Add the attributes to the VAO
 	// position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 	//normal attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+	//texture attribute
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
 
 	unsigned int lightVAO;
 	glGenVertexArrays(1, &lightVAO);
 	glBindVertexArray(lightVAO);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+
+	// ---- TEXTURES ----
+	unsigned int diffuseMap = ft_load_texture("textures/container.png");
+	unsigned int specularMap = ft_load_texture("textures/container_specular.png");
+	glUseProgram(objShader);
+	glUniform1i(glGetUniformLocation(objShader, "material.diffuse"), 0);
+	glUniform1i(glGetUniformLocation(objShader, "material.specular"), 1);
 
 	// ---- MAIN LOOP ----
 	while(!glfwWindowShouldClose(window))
@@ -245,29 +267,58 @@ int main(int, char**)
 		
 		// Set cube uniforms
 		glUseProgram(objShader);
-		t_vec3 lightPos = ft_vec3(1.2f, 1.0f, 2.0f);
-		glUniform3f(glGetUniformLocation(objShader, "objectColor"), 1.0f, 0.5f, 0.31f);
-		glUniform3f(glGetUniformLocation(objShader, "lightColor"), 1.0f, 1.0f, 1.0f);
-		glUniform3f(glGetUniformLocation(objShader, "lightPos"), lightPos.v[0], lightPos.v[1], lightPos.v[2]);
+		float lightX = sin(glfwGetTime()) * 2.0f;
+		float lightZ = cos(glfwGetTime()) * 2.0f;
+		t_vec3 lightPos = ft_vec3(lightX, 1.0f, lightZ);
+		t_vec3 lightColor = ft_vec3(1, 1, 1);
+		t_vec3 ambientColor = ft_vec3_mul(lightColor, ft_vec3(0.1f, 0.1f, 0.1f));
+		t_vec3 diffuseColor = ft_vec3_mul(lightColor, ft_vec3(0.8f, 0.8f, 0.8f));
+
+		glUniform3f(glGetUniformLocation(objShader, "material.specular"), 0.5f, 0.5f, 0.5f);
+		glUniform1f(glGetUniformLocation(objShader, "material.shininess"), 64.0f);
+
+		glUniform3f(glGetUniformLocation(objShader, "light.position"), camera.pos.v[0], camera.pos.v[1], camera.pos.v[2]);
+		glUniform3f(glGetUniformLocation(objShader, "light.direction"), camera.front.v[0], camera.front.v[1], camera.front.v[2]);
+		glUniform1f(glGetUniformLocation(objShader, "light.cutOff"), cos(ft_deg_to_rad(12.5f)));
+		glUniform1f(glGetUniformLocation(objShader, "light.outerCutOff"), cos(ft_deg_to_rad(17.5f)));
+		glUniform3f(glGetUniformLocation(objShader, "light.ambient"), ambientColor.v[0], ambientColor.v[1], ambientColor.v[2]);
+		glUniform3f(glGetUniformLocation(objShader, "light.diffuse"), diffuseColor.v[0], diffuseColor.v[1], diffuseColor.v[2]);
+		glUniform3f(glGetUniformLocation(objShader, "light.specular"), 1.0f, 1.0f, 1.0f);
+		glUniform1f(glGetUniformLocation(objShader, "light.constant"), 1.0f);
+		glUniform1f(glGetUniformLocation(objShader, "light.linear"), 0.045f);
+		glUniform1f(glGetUniformLocation(objShader, "light.quadratic"), 0.0075f);
+
 		glUniform3f(glGetUniformLocation(objShader, "viewPos"), camera.pos.v[0], camera.pos.v[1], camera.pos.v[2]);
+
 		t_mat4 projection = ft_mat4_persp(ft_deg_to_rad(camera.fov), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
 		glUniformMatrix4fv(glGetUniformLocation(objShader, "projection"), 1, GL_TRUE, projection.m);
 		t_mat4 view = ft_lookat(camera.pos, ft_vec3_add(camera.pos, camera.front), camera.up);
 		glUniformMatrix4fv(glGetUniformLocation(objShader,"view"), 1, GL_TRUE, view.m);
-		t_mat4 model = ft_mat4();
-		glUniformMatrix4fv(glGetUniformLocation(objShader,"model"), 1, GL_TRUE, model.m);
+		unsigned int modelLoc = glGetUniformLocation(objShader,"model");
 
 		// Draw cube
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, diffuseMap);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, specularMap);
 		glBindVertexArray(cubeVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		for (unsigned int i = 0; i < 10; i++)
+		{
+			t_mat4 model = ft_mat4_transl(cubPos[i]);
+			float angle = 20.0f * i;
+			model = ft_mat4_mul(model, ft_mat4_rot(ft_vec3(1.0f, 0.3f, 0.5f), ft_deg_to_rad(angle)));
+			glUniformMatrix4fv(modelLoc, 1, GL_TRUE, model.m);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
 
 		// Same for light cube
 		glUseProgram(lightCubeShader);
+		glUniform3f(glGetUniformLocation(lightCubeShader, "lightColor"), lightColor.v[0], lightColor.v[1], lightColor.v[2]);
 		glUniformMatrix4fv(glGetUniformLocation(lightCubeShader, "projection"), 1, GL_TRUE, projection.m);
 		glUniformMatrix4fv(glGetUniformLocation(lightCubeShader,"view"), 1, GL_TRUE, view.m);
 		t_mat4 transl = ft_mat4_transl(lightPos);
 		t_mat4 scale = ft_mat4_scale(ft_vec3(0.2f, 0.2f, 0.2f));
-		model = ft_mat4_mul(transl, scale);
+		t_mat4 model = ft_mat4_mul(transl, scale);
 		glUniformMatrix4fv(glGetUniformLocation(objShader,"model"), 1, GL_TRUE, model.m);
 
 		glBindVertexArray(lightVAO);
