@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: sbelomet <sbelomet@student.42.fr>          +#+  +:+       +#+         #
+#    By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/11 13:18:10 by sbelomet          #+#    #+#              #
-#    Updated: 2025/10/25 13:38:38 by sbelomet         ###   ########.fr        #
+#    Updated: 2025/10/28 16:20:13 by sbelomet         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,7 +43,8 @@ INCLUDE		= -I include/ -I $(LIB_PATH)libft/include/  -I $(LIB_PATH)libftmath/inc
 
 # Files
 
-SRC_FILES = main.c glad.c read_file.c shader_utils.c stb_image.c camera_utils.c texture_utils.c
+SRC_FILES = main.c glad.c read_file.c shader_utils.c stb_image.c camera_utils.c texture_utils.c \
+			mesh.c model.c obj_import.c obj_import_utils.c parsing.c
 OBJ_FILES = $(SRC_FILES:.c=.o)
 
 SRC			= $(addprefix $(SRC_PATH), $(SRC_FILES))

@@ -6,7 +6,7 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 11:52:54 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/10/22 16:12:44 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/10/28 12:23:18 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,11 @@
 # endif
 
 /* Structures */
+typedef struct	s_vec2
+{
+	float	v[2];
+}				t_vec2;
+
 typedef struct	s_vec3
 {
 	float	v[3];
@@ -41,6 +46,7 @@ typedef struct	s_mat4
 double	ft_deg_to_rad(double deg);
 double	ft_rad_to_deg(double rad);
 
+t_vec2	ft_vec2(const float x, const float y);
 t_vec3	ft_vec3(const float x, const float y, const float z);
 t_vec3	ft_vec3_null(void);
 t_vec4	ft_vec4(const float x, const float y, const float z, const float w);

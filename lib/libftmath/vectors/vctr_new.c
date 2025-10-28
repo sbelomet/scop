@@ -6,11 +6,20 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 12:03:06 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/10/22 15:49:04 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/10/28 12:22:55 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libftmath.h"
+
+t_vec2	ft_vec2(const float x, const float y)
+{
+	t_vec2	v;
+
+	v.v[0] = x;
+	v.v[1] = y;
+	return (v);
+}
 
 t_vec3	ft_vec3(const float x, const float y, const float z)
 {
