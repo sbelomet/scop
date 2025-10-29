@@ -1,29 +1,15 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parsing.c                                          :+:      :+:    :+:   */
+/*   allocation.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/28 16:20:33 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/10/29 12:41:57 by sbelomet         ###   ########.fr       */
+/*   Created: 2025/10/29 12:33:47 by sbelomet          #+#    #+#             */
+/*   Updated: 2025/10/29 12:34:01 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "scop.h"
 
-int	ft_parse_mtllib(char *)
-{
-	return (GL_TRUE);
-}
 
-int	ft_parse_mesh(t_base *base, char *line)
-{
-	base->model.mesh_count++;
-	ft_mesh_push();
-}
-
-int	ft_parse_vertex(t_base *base, char *line)
-{
-
-}

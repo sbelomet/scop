@@ -6,19 +6,20 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/28 15:30:10 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/10/28 16:18:23 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/10/29 11:09:06 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "scop.h"
 
-void	ft_load_obj(char *path)
+void	ft_load_obj(t_base *base, char *path)
 {
 	int fd = open(path, O_RDONLY);
 	if (fd < 0)
 		return (printf("Failed to open file: %s\n", path));
 
 	int fail = 0;
+	int last = -1;
 	char *line;
 	while (GL_TRUE)
 	{
@@ -35,6 +36,13 @@ void	ft_load_obj(char *path)
 		}
 		else if (startswithmtllib(line))
 		{
+			if (last != -1)
+			{
+				fail = 1;
+				ft_putstr_fd("bad mtllib placement\n", 1);
+				if (line) free(line);
+				break ;
+			}
 			if (ft_parse_mtllib(line))
 			{
 				fail = 1;
@@ -42,49 +50,89 @@ void	ft_load_obj(char *path)
 				if (line) free(line);
 				break ;
 			}
+			last = OBJ_ML;
 		}
 		else if (line[0] == 'o' && line[1] == ' ')
 		{
-			if (ft_parse_mesh(line))
+			if (last != -1 && last != OBJ_ML)
+			{
+				fail = 1;
+				ft_putstr_fd("bad mtllib\n", 1);
+				if (line) free(line);
+				break ;
+			}
+			if (ft_parse_mesh(base, line))
 			{
 				fail = 1;
 				ft_putstr_fd("bad mesh name\n", 1);
 				if (line) free(line);
 				break ;
 			}
+			last = OBJ_O;
 		}
 		else if (line[0] == 'v' && line[1] == ' ')
 		{
-			if (ft_parse_vertex(line))
+			if (last != OBJ_O && last != OBJ_V)
+			{
+				fail = 1;
+				ft_putstr_fd("bad vertex coord placement\n", 1);
+				if (line) free(line);
+				break ;
+			}
+			if (ft_parse_vertex(base, line))
 			{
 				fail = 1;
 				ft_putstr_fd("bad vertex coord\n", 1);
 				if (line) free(line);
 				break ;
 			}
+			last = OBJ_V;
 		}
 		else if (line[0] == 'v' && line[1] == 't' && line[2] == ' ')
 		{
-			if (ft_parse_texcoord(line))
+			if (last != OBJ_V && last != OBJ_VT)
+			{
+				fail = 1;
+				ft_putstr_fd("bad texture coord placement\n", 1);
+				if (line) free(line);
+				break ;
+			}
+			if (ft_parse_texcoord(base, line))
 			{
 				fail = 1;
 				ft_putstr_fd("bad texture coord\n", 1);
 				if (line) free(line);
 				break ;
 			}
+			last = OBJ_VT;
 		}
 		else if (line[0] == 'v' && line[1] == 'n' && line[2] == ' ')
 		{
-			if (ft_parse_normal(line))
+			if (last != OBJ_VT && last != OBJ_VN)
+			{
+				fail = 1;
+				ft_putstr_fd("bad normal placement\n", 1);
+				if (line) free(line);
+				break ;
+			}
+			if (ft_parse_normal(base, line))
 			{
 				fail = 1;
 				ft_putstr_fd("bad normal\n", 1);
 				if (line) free(line);
 				break ;
 			}
+			last = OBJ_VN;
 		}
 		else if (startswithusemtl(line))
 		{
+			if (last != OBJ_VN)
+			{
+				fail = 1;
+				ft_putstr_fd("bad usemtl placement\n", 1);
+				if (line) free(line);
+				break ;
+			}
 			if (ft_parse_usemtl(line))
 			{
 				fail = 1;
@@ -92,9 +140,17 @@ void	ft_load_obj(char *path)
 				if (line) free(line);
 				break ;
 			}
+			last = OBJ_UM;
 		}
 		else if (line[0] == 's' && line[1] == ' ')
 		{
+			if (last != OBJ_UM && last != OBJ_F)
+			{
+				fail = 1;
+				ft_putstr_fd("bad smooth placement\n", 1);
+				if (line) free(line);
+				break ;
+			}
 			if (ft_parse_smooth(line))
 			{
 				fail = 1;
@@ -105,13 +161,21 @@ void	ft_load_obj(char *path)
 		}
 		else if (line[0] == 'f' && line[1] == ' ')
 		{
-			if (ft_parse_face(line))
+			if (last != OBJ_UM && last != OBJ_F)
+			{
+				fail = 1;
+				ft_putstr_fd("bad face placement\n", 1);
+				if (line) free(line);
+				break ;
+			}
+			if (ft_parse_face(base, line))
 			{
 				fail = 1;
 				ft_putstr_fd("bad face\n", 1);
 				if (line) free(line);
 				break ;
 			}
+			last = OBJ_F;
 		}
 		if (line)
 			free(line);

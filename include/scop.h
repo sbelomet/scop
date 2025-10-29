@@ -6,7 +6,7 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/12 09:59:43 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/10/28 16:22:36 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/10/29 12:14:22 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,17 @@ enum e_tex_type
 {
 	TEX_DIFF,
 	TEX_SPEC
+};
+
+enum e_obj_keys
+{
+	OBJ_ML,
+	OBJ_O,
+	OBJ_V,
+	OBJ_VT,
+	OBJ_VN,
+	OBJ_UM,
+	OBJ_F
 };
 
 /* Structures */
@@ -83,19 +94,25 @@ typedef struct	s_model
 	char			*dir;
 }				t_model;
 
+typedef struct	s_base
+{
+	t_model	model;
+}				t_base;
+
+
 
 /* Function prototypes */
 int				startswithmtllib(char *line);
 int				startswithusemtl(char *line);
 
-int				ft_parse_mtllib(line);
-int				ft_parse_mesh(line);
-int				ft_parse_vertex(line);
-int				ft_parse_texcoord(line);
-int				ft_parse_normal(line);
-int				ft_parse_usemtl(line);
-int				ft_parse_smooth(line);
-int				ft_parse_face(line);
+int				ft_parse_mtllib(char *line);
+int				ft_parse_mesh(t_base *base, char *line);
+int				ft_parse_vertex(t_base *base, char *line);
+int				ft_parse_texcoord(t_base *base, char *line);
+int				ft_parse_normal(t_base *base, char *line);
+int				ft_parse_usemtl(char *line);
+int				ft_parse_smooth(char *line);
+int				ft_parse_face(t_base *base, char *line);
 
 char			*readFile(const char* filePath);
 unsigned int	ft_load_texture(const char *path);
@@ -104,6 +121,14 @@ unsigned int	ft_newShader(const char *vertexPath, const char *fragmentPath);
 
 void			ft_mesh_setup(t_mesh *mesh);
 void			ft_mesh_draw(t_mesh *mesh, unsigned int shader);
+
+/* model/mesh heap helpers */
+int		ft_model_init(t_model *m, unsigned int mesh_capacity);
+void		ft_model_free(t_model *m);
+t_mesh		*ft_model_add_mesh(t_model *m);
+int		ft_mesh_reserve(t_mesh *mesh, unsigned int vert_cap, unsigned int idx_cap, unsigned int tex_cap);
+void		ft_mesh_free(t_mesh *mesh);
+
 
 t_mat4			ft_lookat(const t_vec3 camPos, const t_vec3 targetPos, const t_vec3 worldUp);
 
