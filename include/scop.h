@@ -6,7 +6,7 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/12 09:59:43 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/10/29 12:14:22 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/10/29 16:14:40 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <stdio.h>
 # include <fcntl.h>
 # include <math.h>
+#include <limits.h>
 
 /* Custom libraries */
 # include "libft.h"
@@ -79,8 +80,11 @@ typedef struct	s_mesh
 	t_texture		*textures;
 
 	unsigned int	vert_count;
+	unsigned int	vert_capacity;
 	unsigned int	index_count;
+	unsigned int	index_capacity;
 	unsigned int	tex_count;
+	unsigned int	tex_capacity;
 
 	unsigned int	VAO;
 	unsigned int	VBO;
@@ -91,6 +95,7 @@ typedef struct	s_model
 {
 	t_mesh			*meshes;
 	unsigned int	mesh_count;
+	unsigned int	mesh_capacity;
 	char			*dir;
 }				t_model;
 
@@ -114,6 +119,9 @@ int				ft_parse_usemtl(char *line);
 int				ft_parse_smooth(char *line);
 int				ft_parse_face(t_base *base, char *line);
 
+int 			ft_mesh_reserve(t_base *base, t_mesh *meshes, size_t new_capacity);
+int				ft_mesh_push(t_base *base, t_mesh *meshes, const t_mesh *new);
+
 char			*readFile(const char* filePath);
 unsigned int	ft_load_texture(const char *path);
 
@@ -121,14 +129,6 @@ unsigned int	ft_newShader(const char *vertexPath, const char *fragmentPath);
 
 void			ft_mesh_setup(t_mesh *mesh);
 void			ft_mesh_draw(t_mesh *mesh, unsigned int shader);
-
-/* model/mesh heap helpers */
-int		ft_model_init(t_model *m, unsigned int mesh_capacity);
-void		ft_model_free(t_model *m);
-t_mesh		*ft_model_add_mesh(t_model *m);
-int		ft_mesh_reserve(t_mesh *mesh, unsigned int vert_cap, unsigned int idx_cap, unsigned int tex_cap);
-void		ft_mesh_free(t_mesh *mesh);
-
 
 t_mat4			ft_lookat(const t_vec3 camPos, const t_vec3 targetPos, const t_vec3 worldUp);
 
