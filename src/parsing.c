@@ -6,7 +6,7 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/28 16:20:33 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/10/30 12:07:22 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/10/30 12:50:25 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ int	ft_parse_mesh(t_base *base, char *line)
 	return (GL_TRUE);
 }
 
-int	ft_parse_vertex(t_base *base, char *line)
+int	ft_parse_vertex(t_base *base, char *line, int i)
 {
 	t_vertex new_vert;
 
@@ -103,12 +103,16 @@ int	ft_parse_vertex(t_base *base, char *line)
 	new_vert.normal = ft_vec3_null();
 	new_vert.tex_coords = ft_vec2(0, 0);
 
-	if (ft_vertex_push(base->model.meshes, base->model.meshes->vertices, &new_vert))
+	if (ft_vertex_push(&(base->model.meshes[i]), base->model.meshes[i].vertices, &new_vert))
 		return (GL_FALSE);
 	return (GL_TRUE);
 }
 
-int	ft_parse_texcoord(t_base *base, char *line, int i)
+int	ft_parse_texcoord(t_base *base, char *line, int mesh_i, int vert_i)
 {
-	
+	int error = ft_vertex_add(&(base->model.meshes[mesh_i]), 
+		&(base->model.meshes[mesh_i].vertices[vert_i]), cutout2coord(line, 3));
+	if (error)
+		return (GL_FALSE);
+	return (GL_TRUE);
 }

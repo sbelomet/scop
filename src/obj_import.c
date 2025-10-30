@@ -6,7 +6,7 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/28 15:30:10 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/10/30 12:07:48 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/10/30 12:33:11 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@ void	ft_load_obj(t_base *base, char *path)
 	if (fd < 0)
 		return (printf("Failed to open file: %s\n", path));
 
-	int i = 0;
+	int mesh_i = -1;
+	int vert_i = 0;
 	int fail = 0;
 	int last = -1;
 	char *line;
@@ -55,10 +56,10 @@ void	ft_load_obj(t_base *base, char *path)
 		}
 		else if (line[0] == 'o' && line[1] == ' ')
 		{
-			if (last != -1 && last != OBJ_ML)
+			if (last != -1 && last != OBJ_ML && last != OBJ_F)
 			{
 				fail = 1;
-				ft_putstr_fd("bad mtllib\n", 1);
+				ft_putstr_fd("bad mesh placement\n", 1);
 				if (line) free(line);
 				break ;
 			}
@@ -70,6 +71,7 @@ void	ft_load_obj(t_base *base, char *path)
 				break ;
 			}
 			last = OBJ_O;
+			mesh_i++;
 		}
 		else if (line[0] == 'v' && line[1] == ' ')
 		{
@@ -80,7 +82,7 @@ void	ft_load_obj(t_base *base, char *path)
 				if (line) free(line);
 				break ;
 			}
-			if (ft_parse_vertex(base, line))
+			if (ft_parse_vertex(base, line, mesh_i))
 			{
 				fail = 1;
 				ft_putstr_fd("bad vertex coord\n", 1);
@@ -99,8 +101,8 @@ void	ft_load_obj(t_base *base, char *path)
 				break ;
 			}
 			if (last == OBJ_V)
-				i = 0;
-			if (ft_parse_texcoord(base, line, i))
+				vert_i = 0;
+			if (ft_parse_texcoord(base, line, vert_i))
 			{
 				fail = 1;
 				ft_putstr_fd("bad texture coord\n", 1);
@@ -108,7 +110,7 @@ void	ft_load_obj(t_base *base, char *path)
 				break ;
 			}
 			last = OBJ_VT;
-			i++;
+			vert_i++;
 		}
 		else if (line[0] == 'v' && line[1] == 'n' && line[2] == ' ')
 		{

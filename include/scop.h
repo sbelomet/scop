@@ -6,7 +6,7 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/12 09:59:43 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/10/30 12:07:13 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/10/30 12:55:41 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,8 +113,8 @@ int				startswithusemtl(char *line);
 
 int				ft_parse_mtllib(char *line);
 int				ft_parse_mesh(t_base *base, char *line);
-int				ft_parse_vertex(t_base *base, char *line);
-int				ft_parse_texcoord(t_base *base, char *line, int i);
+int				ft_parse_vertex(t_base *base, char *line, int i);
+int				ft_parse_texcoord(t_base *base, char *line, int mesh_i, int vert_i);
 int				ft_parse_normal(t_base *base, char *line);
 int				ft_parse_usemtl(char *line);
 int				ft_parse_smooth(char *line);
@@ -124,6 +124,7 @@ int				ft_mesh_reserve(t_model *model, t_mesh *meshes, size_t new_capacity);
 int				ft_mesh_push(t_model *model, t_mesh *meshes, const t_mesh *new);
 int				ft_vertex_reserve(t_mesh *mesh, t_vertex *vertices, size_t new_capacity);
 int				ft_vertex_push(t_mesh *mesh, t_vertex *vertices, const t_vertex *new);
+int				ft_vertex_add(t_mesh *mesh, t_vertex *vertex, t_vec2 );
 
 char			*readFile(const char* filePath);
 unsigned int	ft_load_texture(const char *path);
