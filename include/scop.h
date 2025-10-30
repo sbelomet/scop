@@ -6,7 +6,7 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/12 09:59:43 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/10/29 16:14:40 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/10/30 12:07:13 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,8 @@
 # include <stdio.h>
 # include <fcntl.h>
 # include <math.h>
-#include <limits.h>
+# include <limits.h>
+# include <string.h>
 
 /* Custom libraries */
 # include "libft.h"
@@ -113,14 +114,16 @@ int				startswithusemtl(char *line);
 int				ft_parse_mtllib(char *line);
 int				ft_parse_mesh(t_base *base, char *line);
 int				ft_parse_vertex(t_base *base, char *line);
-int				ft_parse_texcoord(t_base *base, char *line);
+int				ft_parse_texcoord(t_base *base, char *line, int i);
 int				ft_parse_normal(t_base *base, char *line);
 int				ft_parse_usemtl(char *line);
 int				ft_parse_smooth(char *line);
 int				ft_parse_face(t_base *base, char *line);
 
-int 			ft_mesh_reserve(t_base *base, t_mesh *meshes, size_t new_capacity);
-int				ft_mesh_push(t_base *base, t_mesh *meshes, const t_mesh *new);
+int				ft_mesh_reserve(t_model *model, t_mesh *meshes, size_t new_capacity);
+int				ft_mesh_push(t_model *model, t_mesh *meshes, const t_mesh *new);
+int				ft_vertex_reserve(t_mesh *mesh, t_vertex *vertices, size_t new_capacity);
+int				ft_vertex_push(t_mesh *mesh, t_vertex *vertices, const t_vertex *new);
 
 char			*readFile(const char* filePath);
 unsigned int	ft_load_texture(const char *path);

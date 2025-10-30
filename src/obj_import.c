@@ -6,7 +6,7 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/28 15:30:10 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/10/29 11:09:06 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/10/30 12:07:48 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ void	ft_load_obj(t_base *base, char *path)
 	if (fd < 0)
 		return (printf("Failed to open file: %s\n", path));
 
+	int i = 0;
 	int fail = 0;
 	int last = -1;
 	char *line;
@@ -97,7 +98,9 @@ void	ft_load_obj(t_base *base, char *path)
 				if (line) free(line);
 				break ;
 			}
-			if (ft_parse_texcoord(base, line))
+			if (last == OBJ_V)
+				i = 0;
+			if (ft_parse_texcoord(base, line, i))
 			{
 				fail = 1;
 				ft_putstr_fd("bad texture coord\n", 1);
@@ -105,6 +108,7 @@ void	ft_load_obj(t_base *base, char *path)
 				break ;
 			}
 			last = OBJ_VT;
+			i++;
 		}
 		else if (line[0] == 'v' && line[1] == 'n' && line[2] == ' ')
 		{
