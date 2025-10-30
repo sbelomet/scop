@@ -6,7 +6,7 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/28 15:30:10 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/10/30 12:33:11 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/10/30 15:31:54 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ void	ft_load_obj(t_base *base, char *path)
 			}
 			if (last == OBJ_V)
 				vert_i = 0;
-			if (ft_parse_texcoord(base, line, vert_i))
+			if (ft_parse_texcoord(base, line, mesh_i, vert_i))
 			{
 				fail = 1;
 				ft_putstr_fd("bad texture coord\n", 1);
@@ -121,7 +121,9 @@ void	ft_load_obj(t_base *base, char *path)
 				if (line) free(line);
 				break ;
 			}
-			if (ft_parse_normal(base, line))
+			if (last == OBJ_VT)
+				vert_i = 0;
+			if (ft_parse_normal(base, line, mesh_i, vert_i))
 			{
 				fail = 1;
 				ft_putstr_fd("bad normal\n", 1);
@@ -129,6 +131,7 @@ void	ft_load_obj(t_base *base, char *path)
 				break ;
 			}
 			last = OBJ_VN;
+			vert_i++;
 		}
 		else if (startswithusemtl(line))
 		{
