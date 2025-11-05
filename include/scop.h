@@ -6,7 +6,7 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/12 09:59:43 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/11/05 12:05:55 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/11/05 15:49:48 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,12 +120,12 @@ int				ft_parse_usemtl(char *line);
 int				ft_parse_smooth(char *line);
 int				ft_parse_face(t_base *base, char *line, int mesh_i);
 
-int				ft_mesh_reserve(t_model *model, t_mesh *meshes, size_t new_capacity);
-int				ft_mesh_push(t_model *model, t_mesh *meshes, const t_mesh *new);
-int				ft_vertex_reserve(t_mesh *mesh, t_vertex *vertices, size_t new_capacity);
-int				ft_vertex_push(t_mesh *mesh, t_vertex *vertices, const t_vertex *new);
-int				ft_index_reserve(t_mesh *mesh, unsigned int *indices, size_t new_capacity);
-int				ft_index_push(t_mesh *mesh, unsigned int *indices, const unsigned int *new);
+int				ft_mesh_reserve(t_model *model, size_t new_capacity);
+int				ft_mesh_push(t_model *model, const t_mesh *new);
+int				ft_vertex_reserve(t_mesh *mesh, size_t new_capacity);
+int				ft_vertex_push(t_mesh *mesh, const t_vertex *new);
+int				ft_index_reserve(t_mesh *mesh, size_t new_capacity);
+int				ft_index_push(t_mesh *mesh, const unsigned int *new);
 
 char			*readFile(const char* filePath);
 unsigned int	ft_load_texture(const char *path);
@@ -139,5 +139,7 @@ void			ft_model_setup(t_model *model);
 void			ft_model_draw(t_model *model, unsigned int shader);
 
 t_mat4			ft_lookat(const t_vec3 camPos, const t_vec3 targetPos, const t_vec3 worldUp);
+
+int ft_model_dump_debug(const t_model *model, const char *path);
 
 #endif

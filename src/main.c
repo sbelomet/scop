@@ -6,7 +6,7 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/11 13:17:04 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/11/05 11:56:41 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/11/05 15:51:13 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,9 +110,10 @@ int main(int, char**)
 	base.model.meshes = NULL;
 	base.model.mesh_count = 0;
 	base.model.mesh_capacity = 0;
-	base.model.dir = "objects/backpack/backpack.obj";
+	base.model.dir = "objects/cube.obj";
 
 	ft_load_obj(&base, base.model.dir);
+	ft_model_dump_debug(&(base.model), "temp");
 
 	camera.pos = ft_vec3(0.0f, 0.0f, 3.0f);
 	camera.front = ft_vec3(0.0f, 0.0f, -1.0f);

@@ -6,7 +6,7 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/28 15:30:10 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/11/05 12:03:40 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/11/05 14:08:26 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void	ft_load_obj(t_base *base, char *path)
 				if (line) free(line);
 				break ;
 			}
-			if (ft_parse_mtllib(line))
+			if (!ft_parse_mtllib(line))
 			{
 				fail = 1;
 				ft_putstr_fd("bad mtllib\n", 1);
@@ -66,7 +66,7 @@ void	ft_load_obj(t_base *base, char *path)
 				if (line) free(line);
 				break ;
 			}
-			if (ft_parse_mesh(base, line))
+			if (!ft_parse_mesh(base, line))
 			{
 				fail = 1;
 				ft_putstr_fd("bad mesh name\n", 1);
@@ -85,7 +85,7 @@ void	ft_load_obj(t_base *base, char *path)
 				if (line) free(line);
 				break ;
 			}
-			if (ft_parse_vertex(base, line, mesh_i))
+			if (!ft_parse_vertex(base, line, mesh_i))
 			{
 				fail = 1;
 				ft_putstr_fd("bad vertex coord\n", 1);
@@ -105,7 +105,7 @@ void	ft_load_obj(t_base *base, char *path)
 			}
 			if (last == OBJ_V)
 				vert_i = 0;
-			if (ft_parse_texcoord(base, line, mesh_i, vert_i))
+			if (!ft_parse_texcoord(base, line, mesh_i, vert_i))
 			{
 				fail = 1;
 				ft_putstr_fd("bad texture coord\n", 1);
@@ -126,7 +126,7 @@ void	ft_load_obj(t_base *base, char *path)
 			}
 			if (last == OBJ_VT)
 				vert_i = 0;
-			if (ft_parse_normal(base, line, mesh_i, vert_i))
+			if (!ft_parse_normal(base, line, mesh_i, vert_i))
 			{
 				fail = 1;
 				ft_putstr_fd("bad normal\n", 1);
@@ -145,7 +145,7 @@ void	ft_load_obj(t_base *base, char *path)
 				if (line) free(line);
 				break ;
 			}
-			if (ft_parse_usemtl(line))
+			if (!ft_parse_usemtl(line))
 			{
 				fail = 1;
 				ft_putstr_fd("bad usemtl\n", 1);
@@ -163,7 +163,7 @@ void	ft_load_obj(t_base *base, char *path)
 				if (line) free(line);
 				break ;
 			}
-			if (ft_parse_smooth(line))
+			if (!ft_parse_smooth(line))
 			{
 				fail = 1;
 				ft_putstr_fd("bad smooth\n", 1);
@@ -180,7 +180,7 @@ void	ft_load_obj(t_base *base, char *path)
 				if (line) free(line);
 				break ;
 			}
-			if (ft_parse_face(base, line, mesh_i))
+			if (!ft_parse_face(base, line, mesh_i))
 			{
 				fail = 1;
 				ft_putstr_fd("bad face\n", 1);

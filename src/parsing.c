@@ -6,7 +6,7 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/28 16:20:33 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/11/05 12:04:53 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/11/05 15:58:43 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,8 @@ static t_vec3 cutout3coord(char *line, int start_offset)
 
 	if (!line)
 		return (ft_vec3_null());
+	
+	printf("line: %s\n", line);
 
 	for (size_t i = 0; i < 2; i++)
 	{
@@ -67,6 +69,7 @@ static t_vec3 cutout3coord(char *line, int start_offset)
 		while (line[end] && line[end] != ' ')
 			end++;
 		char *coord = ft_substr(line, start, end - start);
+		printf("coord: %s\n", coord);
 		end++;
 		if (coord)
 		{
@@ -112,27 +115,28 @@ int	ft_parse_mtllib(char *)
 int	ft_parse_mesh(t_base *base, char *)
 {
 	t_mesh new_mesh;
-
-	new_mesh.vertices = NULL;
-	new_mesh.indices = NULL;
-	new_mesh.textures = NULL;
+	new_mesh.vertices = malloc(sizeof(t_vertex));
+	new_mesh.indices = malloc(sizeof(unsigned int));
+	new_mesh.textures = malloc(sizeof(t_texture));
 	new_mesh.vert_count = 0;
-	new_mesh.vert_capacity = 0;
+	new_mesh.vert_capacity = 1; /* we allocated one element */
 	new_mesh.index_count = 0;
-	new_mesh.index_capacity = 0;
+	new_mesh.index_capacity = 1;
 	new_mesh.tex_count = 0;
-	new_mesh.tex_capacity = 0;
+	new_mesh.tex_capacity = 1;
 	new_mesh.VAO = 0;
 	new_mesh.VBO = 0;
 	new_mesh.EBO = 0;
 
-	if (ft_mesh_push(&(base->model), base->model.meshes, &new_mesh))
+	if (!ft_mesh_push(&(base->model), &new_mesh))
 		return (GL_FALSE);
+	printf("base->model.mesh_count: %i\n", base->model.mesh_count);
 	return (GL_TRUE);
 }
 
 int	ft_parse_vertex(t_base *base, char *line, int i)
 {
+	printf("start of parse vert %i\n", base->model.meshes[i].vert_count);
 	t_vertex new_vert;
 
 	new_vert.position = cutout3coord(line, 2);
@@ -142,33 +146,36 @@ int	ft_parse_vertex(t_base *base, char *line, int i)
 	if (!(base->model.meshes) || (base->model.mesh_count < (unsigned int)(i + 1)))
 		return (GL_FALSE);
 
-	if (ft_vertex_push(&(base->model.meshes[i]), base->model.meshes[i].vertices, &new_vert))
+	if (!ft_vertex_push(&(base->model.meshes[i]), &new_vert))
 		return (GL_FALSE);
 	return (GL_TRUE);
 }
 
 int	ft_parse_texcoord(t_base *base, char *line, int mesh_i, int vert_i)
-{	
+{
+	printf("mesh_i : %i, vert_i: %i\n", mesh_i, vert_i);
 	if (!(base->model.meshes) || (base->model.mesh_count < (unsigned int)(mesh_i + 1)))
 		return (GL_FALSE);
 	
 	if (!(base->model.meshes[mesh_i].vertices) || (base->model.meshes[mesh_i].vert_count < (unsigned int)(vert_i + 1)))
 		return (GL_FALSE);
-	
-	base->model.meshes->vertices[vert_i].tex_coords = cutout2coord(line, 3);
+	printf("adding tex coord\n");
+	base->model.meshes[mesh_i].vertices[vert_i].tex_coords = cutout2coord(line, 3);
+	printf("added\n");
 
 	return (GL_TRUE);
 }
 
 int	ft_parse_normal(t_base *base, char *line, int mesh_i, int vert_i)
-{	
+{
+	printf("start of parse normal\n");
 	if (!(base->model.meshes) || (base->model.mesh_count < (unsigned int)(mesh_i + 1)))
 		return (GL_FALSE);
 	
 	if (!(base->model.meshes[mesh_i].vertices) || (base->model.meshes[mesh_i].vert_count < (unsigned int)(vert_i + 1)))
 		return (GL_FALSE);
-	
-	base->model.meshes->vertices[vert_i].normal = ft_vec3_normalize(cutout3coord(line, 3));
+    
+	base->model.meshes[mesh_i].vertices[vert_i].normal = ft_vec3_normalize(cutout3coord(line, 3));
 
 	return (GL_TRUE);
 }
@@ -185,6 +192,7 @@ int	ft_parse_smooth(char *)
 
 int	ft_parse_face(t_base *base, char *line, int mesh_i)
 {
+	printf("start f face\n");
 	if (!valid_line(line + 2))
 		return (GL_FALSE);
 		
@@ -198,10 +206,18 @@ int	ft_parse_face(t_base *base, char *line, int mesh_i)
 	for (size_t i = 0; i < 8; i++)
 	{
 		if (indices[i] == 0)
+		{
+			free(indices);
 			return (GL_FALSE);
-		if (ft_index_push(&(base->model.meshes[mesh_i]), base->model.meshes[mesh_i].indices, &(indices[i])))
+		}
+		if (!ft_index_push(&(base->model.meshes[mesh_i]), &(indices[i])))
+		{
+			free(indices);
 			return (GL_FALSE);
+		}
 	}
+
+	free(indices);
 
 	return (GL_TRUE);
 }
