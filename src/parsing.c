@@ -6,11 +6,22 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/28 16:20:33 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/10/30 15:55:55 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/11/05 12:04:53 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "scop.h"
+
+static int	valid_line(char *arg)
+{
+	while (*arg)
+	{
+		if (!ft_isdigit(*arg) && !(*arg == '/')  && !(*arg == ' '))
+			return (0);
+		arg++;
+	}
+	return (1);
+}
 
 static t_vec2 cutout2coord(char *line, int start_offset)
 {
@@ -68,12 +79,37 @@ static t_vec3 cutout3coord(char *line, int start_offset)
 	return (res);
 }
 
+static unsigned int *cutout_indices(char *line)
+{
+	unsigned int *res = malloc(sizeof(unsigned int) * 9);
+	if (!res) return NULL;
+	int end = 2;
+	int start = 2;
+
+	for (size_t i = 0; i < 8; i++)
+	{
+		start = end;
+		while (line[end] && line[end] != '/' && line[end] != ' ')
+			end++;
+		char *index = ft_substr(line, start, end - start);
+		end++;
+		if (index)
+		{
+			res[i] = atoi(index);
+			free(index);
+		}
+		else
+			res[i] = 0;
+	}
+	return (res);
+}
+
 int	ft_parse_mtllib(char *)
 {
 	return (GL_TRUE);
 }
 
-int	ft_parse_mesh(t_base *base, char *line)
+int	ft_parse_mesh(t_base *base, char *)
 {
 	t_mesh new_mesh;
 
@@ -103,7 +139,7 @@ int	ft_parse_vertex(t_base *base, char *line, int i)
 	new_vert.normal = ft_vec3_null();
 	new_vert.tex_coords = ft_vec2(0, 0);
 
-	if (!(base->model.meshes) || (base->model.mesh_count < i + 1))
+	if (!(base->model.meshes) || (base->model.mesh_count < (unsigned int)(i + 1)))
 		return (GL_FALSE);
 
 	if (ft_vertex_push(&(base->model.meshes[i]), base->model.meshes[i].vertices, &new_vert))
@@ -113,10 +149,10 @@ int	ft_parse_vertex(t_base *base, char *line, int i)
 
 int	ft_parse_texcoord(t_base *base, char *line, int mesh_i, int vert_i)
 {	
-	if (!(base->model.meshes) || (base->model.mesh_count < mesh_i + 1))
+	if (!(base->model.meshes) || (base->model.mesh_count < (unsigned int)(mesh_i + 1)))
 		return (GL_FALSE);
 	
-	if (!(base->model.meshes[mesh_i].vertices) || (base->model.meshes[mesh_i].vert_count < vert_i + 1))
+	if (!(base->model.meshes[mesh_i].vertices) || (base->model.meshes[mesh_i].vert_count < (unsigned int)(vert_i + 1)))
 		return (GL_FALSE);
 	
 	base->model.meshes->vertices[vert_i].tex_coords = cutout2coord(line, 3);
@@ -126,10 +162,10 @@ int	ft_parse_texcoord(t_base *base, char *line, int mesh_i, int vert_i)
 
 int	ft_parse_normal(t_base *base, char *line, int mesh_i, int vert_i)
 {	
-	if (!(base->model.meshes) || (base->model.mesh_count < mesh_i + 1))
+	if (!(base->model.meshes) || (base->model.mesh_count < (unsigned int)(mesh_i + 1)))
 		return (GL_FALSE);
 	
-	if (!(base->model.meshes[mesh_i].vertices) || (base->model.meshes[mesh_i].vert_count < vert_i + 1))
+	if (!(base->model.meshes[mesh_i].vertices) || (base->model.meshes[mesh_i].vert_count < (unsigned int)(vert_i + 1)))
 		return (GL_FALSE);
 	
 	base->model.meshes->vertices[vert_i].normal = ft_vec3_normalize(cutout3coord(line, 3));
@@ -147,12 +183,25 @@ int	ft_parse_smooth(char *)
 	return (GL_TRUE);
 }
 
-int	ft_parse_face(t_base *base, char *line, int i)
+int	ft_parse_face(t_base *base, char *line, int mesh_i)
 {
-	if (!(base->model.meshes) || (base->model.mesh_count < i + 1))
+	if (!valid_line(line + 2))
 		return (GL_FALSE);
-	
-	if (ft_index_push(&(base->model.meshes[i]), base->model.meshes[i].indices, new_index))
+		
+	if (!(base->model.meshes) || (base->model.mesh_count < (unsigned int)(mesh_i + 1)))
 		return (GL_FALSE);
+		
+	unsigned int *indices = cutout_indices(line);
+	if (!indices)
+		return (GL_FALSE);
+
+	for (size_t i = 0; i < 8; i++)
+	{
+		if (indices[i] == 0)
+			return (GL_FALSE);
+		if (ft_index_push(&(base->model.meshes[mesh_i]), base->model.meshes[mesh_i].indices, &(indices[i])))
+			return (GL_FALSE);
+	}
+
 	return (GL_TRUE);
 }

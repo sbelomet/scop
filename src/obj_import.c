@@ -6,7 +6,7 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/28 15:30:10 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/10/30 15:31:54 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/11/05 12:03:40 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,10 @@ void	ft_load_obj(t_base *base, char *path)
 {
 	int fd = open(path, O_RDONLY);
 	if (fd < 0)
-		return (printf("Failed to open file: %s\n", path));
+	{
+		printf("Failed to open file: %s\n", path);
+		return ;
+	}
 
 	int mesh_i = -1;
 	int vert_i = 0;
@@ -177,7 +180,7 @@ void	ft_load_obj(t_base *base, char *path)
 				if (line) free(line);
 				break ;
 			}
-			if (ft_parse_face(base, line))
+			if (ft_parse_face(base, line, mesh_i))
 			{
 				fail = 1;
 				ft_putstr_fd("bad face\n", 1);
@@ -189,4 +192,6 @@ void	ft_load_obj(t_base *base, char *path)
 		if (line)
 			free(line);
 	};
+	if (fail)
+		printf("something failed\n");
 }

@@ -6,7 +6,7 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/11 13:17:04 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/10/28 11:10:49 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/11/05 11:56:41 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,14 @@ void framebuffer_size_callback(GLFWwindow *, int width, int height)
 int main(int, char**)
 {
 	// ---- INITIATIONS ----
+	t_base base;
+	base.model.meshes = NULL;
+	base.model.mesh_count = 0;
+	base.model.mesh_capacity = 0;
+	base.model.dir = "objects/backpack/backpack.obj";
+
+	ft_load_obj(&base, base.model.dir);
+
 	camera.pos = ft_vec3(0.0f, 0.0f, 3.0f);
 	camera.front = ft_vec3(0.0f, 0.0f, -1.0f);
 	camera.up = ft_vec3(0.0f, 1.0f, 0.0f);
@@ -142,8 +150,18 @@ int main(int, char**)
 		exit(-1);
 	}
 
+	// ---- SETUP Model ----
+	ft_model_setup(&(base.model));
+
+	// ---- COORDS ----
+	t_vec3 pointLightPos[] = {
+		ft_vec3( 0.7f,  0.2f,  2.0f),
+        ft_vec3( 2.3f, -3.3f, -4.0f),
+        ft_vec3(-4.0f,  2.0f, -12.0f),
+        ft_vec3( 0.0f,  0.0f, -3.0f)
+	};
+
 	// ---- SHADERS ----
-	
 	// Enable the use of alpha
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -153,103 +171,6 @@ int main(int, char**)
 	// Create shader program
 	unsigned int objShader = ft_newShader("shaders/obj_vs.glsl", "shaders/obj_fs.glsl");
 	unsigned int lightCubeShader = ft_newShader("shaders/light_vs.glsl", "shaders/light_fs.glsl");
-
-	// ---- COORDS ----
-	// Vertices for cube
-	float vertices[] = {
-        // positions          // normals           // texture coords
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
-         0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
-
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
-         0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
-
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-
-         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
-         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-         0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
-
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
-	};
-
-	t_vec3 cubPos[] = {
-		ft_vec3( 0.0f, 0.0f, 0.0f),
-		ft_vec3( 2.0f, 5.0f, -15.0f),
-		ft_vec3(-1.5f, -2.2f, -2.5f),
-		ft_vec3(-3.8f, -2.0f, -12.3f),
-		ft_vec3( 2.4f, -0.4f, -3.5f),
-		ft_vec3(-1.7f, 3.0f, -7.5f),
-		ft_vec3( 1.3f, -2.0f, -2.5f),
-		ft_vec3( 1.5f, 2.0f, -2.5f),
-		ft_vec3( 1.5f, 0.2f, -1.5f),
-		ft_vec3(-1.3f, 1.0f, -1.5f)
-	};
-
-	t_vec3 pointLightPos[] = {
-		ft_vec3( 0.7f,  0.2f,  2.0f),
-        ft_vec3( 2.3f, -3.3f, -4.0f),
-        ft_vec3(-4.0f,  2.0f, -12.0f),
-        ft_vec3( 0.0f,  0.0f, -3.0f)
-	};
-
-	// ---- VAO, VBO, EBO ----
-	// Generate the Vertex Array Object, the Vertex Buffer Object and the Element Buffer Object
-	unsigned int cubeVAO, VBO;
-	glGenVertexArrays(1, &cubeVAO);
-	glGenBuffers(1, &VBO);
-
-	// Bind the VBO and add the vertices to it
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	// Bind the VAO to set it up
-	glBindVertexArray(cubeVAO);
-
-	// Add the attributes to the VAO
-	// position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-	//normal attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-	//texture attribute
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-    glEnableVertexAttribArray(2);
-
-	unsigned int lightVAO;
-	glGenVertexArrays(1, &lightVAO);
-	glBindVertexArray(lightVAO);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
 
 	// ---- TEXTURES ----
 	unsigned int diffuseMap = ft_load_texture("textures/container.png");
@@ -330,38 +251,17 @@ int main(int, char**)
 		glUniformMatrix4fv(glGetUniformLocation(objShader, "projection"), 1, GL_TRUE, projection.m);
 		t_mat4 view = ft_lookat(camera.pos, ft_vec3_add(camera.pos, camera.front), camera.up);
 		glUniformMatrix4fv(glGetUniformLocation(objShader,"view"), 1, GL_TRUE, view.m);
-		unsigned int modelLoc = glGetUniformLocation(objShader,"model");
+		t_mat4 model = ft_mat4();
+		glUniformMatrix4fv(glGetUniformLocation(objShader,"model"), 1, GL_TRUE, model.m);
 
 		// Draw cube
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, diffuseMap);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, specularMap);
-		glBindVertexArray(cubeVAO);
-		for (unsigned int i = 0; i < 10; i++)
-		{
-			t_mat4 model = ft_mat4_transl(cubPos[i]);
-			float angle = 20.0f * i;
-			model = ft_mat4_mul(model, ft_mat4_rot(ft_vec3(1.0f, 0.3f, 0.5f), ft_deg_to_rad(angle)));
-			glUniformMatrix4fv(modelLoc, 1, GL_TRUE, model.m);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
+		
+		ft_model_draw(&(base.model), objShader);
 
-		// Same for light cube
-		glUseProgram(lightCubeShader);
-		glUniform3f(glGetUniformLocation(lightCubeShader, "lightColor"), 1.0f, 1.0f, 1.0f);
-		glUniformMatrix4fv(glGetUniformLocation(lightCubeShader, "projection"), 1, GL_TRUE, projection.m);
-		glUniformMatrix4fv(glGetUniformLocation(lightCubeShader,"view"), 1, GL_TRUE, view.m);
-		modelLoc = glGetUniformLocation(lightCubeShader,"model");
-
-		glBindVertexArray(lightVAO);
-		for (unsigned int i = 0; i < 4; i++)
-		{
-			t_mat4 model = ft_mat4_transl(pointLightPos[i]);
-			model = ft_mat4_mul(model, ft_mat4_scale(ft_vec3(0.2f, 0.2f, 0.2f)));
-			glUniformMatrix4fv(modelLoc, 1, GL_TRUE, model.m);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
 
 		// Swap the buffers and check and call events
 		glfwSwapBuffers(window);
@@ -369,9 +269,6 @@ int main(int, char**)
 	}
 	
 	// Cleaning
-	glDeleteVertexArrays(1, &cubeVAO);
-	glDeleteVertexArrays(1, &lightVAO);
-    glDeleteBuffers(1, &VBO);
     glDeleteProgram(objShader);
 	glDeleteProgram(lightCubeShader);
 	

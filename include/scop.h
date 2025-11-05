@@ -6,7 +6,7 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/12 09:59:43 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/10/30 15:54:22 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/11/05 12:05:55 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,14 +124,19 @@ int				ft_mesh_reserve(t_model *model, t_mesh *meshes, size_t new_capacity);
 int				ft_mesh_push(t_model *model, t_mesh *meshes, const t_mesh *new);
 int				ft_vertex_reserve(t_mesh *mesh, t_vertex *vertices, size_t new_capacity);
 int				ft_vertex_push(t_mesh *mesh, t_vertex *vertices, const t_vertex *new);
+int				ft_index_reserve(t_mesh *mesh, unsigned int *indices, size_t new_capacity);
+int				ft_index_push(t_mesh *mesh, unsigned int *indices, const unsigned int *new);
 
 char			*readFile(const char* filePath);
 unsigned int	ft_load_texture(const char *path);
+void			ft_load_obj(t_base *base, char *path);
 
 unsigned int	ft_newShader(const char *vertexPath, const char *fragmentPath);
 
 void			ft_mesh_setup(t_mesh *mesh);
 void			ft_mesh_draw(t_mesh *mesh, unsigned int shader);
+void			ft_model_setup(t_model *model);
+void			ft_model_draw(t_model *model, unsigned int shader);
 
 t_mat4			ft_lookat(const t_vec3 camPos, const t_vec3 targetPos, const t_vec3 worldUp);
 
