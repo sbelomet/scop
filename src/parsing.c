@@ -6,7 +6,7 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/28 16:20:33 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/11/05 15:58:43 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/11/06 15:41:52 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,16 +26,15 @@ static int	valid_line(char *arg)
 static t_vec2 cutout2coord(char *line, int start_offset)
 {
 	t_vec2 res;
-	int end = 0;
-	int start = 0;
+	int end = start_offset;
+	int start = start_offset;
 
 	if (!line)
 		return (ft_vec2(0, 0));
 
-	for (size_t i = 0; i < 1; i++)
+	for (size_t i = 0; i < 2; i++)
 	{
-		start = start_offset + end;
-		end = start;
+		start = end;
 		while (line[end] && line[end] != ' ')
 			end++;
 		char *coord = ft_substr(line, start, end - start);
@@ -54,22 +53,19 @@ static t_vec2 cutout2coord(char *line, int start_offset)
 static t_vec3 cutout3coord(char *line, int start_offset)
 {
 	t_vec3 res;
-	int end = 0;
-	int start = 0;
+	int end = start_offset;
+	int start = start_offset;
 
 	if (!line)
 		return (ft_vec3_null());
-	
-	printf("line: %s\n", line);
 
-	for (size_t i = 0; i < 2; i++)
+	for (size_t i = 0; i < 3; i++)
 	{
-		start = start_offset + end;
-		end = start;
+		start = end;
 		while (line[end] && line[end] != ' ')
 			end++;
+
 		char *coord = ft_substr(line, start, end - start);
-		printf("coord: %s\n", coord);
 		end++;
 		if (coord)
 		{
@@ -89,12 +85,17 @@ static unsigned int *cutout_indices(char *line)
 	int end = 2;
 	int start = 2;
 
-	for (size_t i = 0; i < 8; i++)
+	for (size_t i = 0; i < 9; i++)
 	{
 		start = end;
 		while (line[end] && line[end] != '/' && line[end] != ' ')
 			end++;
+		printf("start: %i\n", start);
+		printf("end: %i\n", end);
+		if (line[start]) printf("line[start]: %c\n", line[start]);
+		if (line[end]) printf("line[end]: %c\n", line[end]);
 		char *index = ft_substr(line, start, end - start);
+		printf("index: %s\n", index);
 		end++;
 		if (index)
 		{
