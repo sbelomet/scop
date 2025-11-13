@@ -6,7 +6,7 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/05 15:48:54 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/11/05 15:49:25 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/11/13 11:01:22 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ int ft_model_dump_debug(const t_model *model, const char *path)
         fprintf(f, "\n# indices (triples)\n");
         for (unsigned int i = 0; i + 2 < mesh->index_count; i += 3)
         {
-            fprintf(f, "tri %u %u %u\n", mesh->indices[i], mesh->indices[i+1], mesh->indices[i+2]);
+			fprintf(f, "tri %u %u %u\n", mesh->indices[i], mesh->indices[i+1], mesh->indices[i+2]);
         }
     }
 

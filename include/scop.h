@@ -6,7 +6,7 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/12 09:59:43 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/11/05 15:49:48 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/11/13 13:20:47 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,11 @@ typedef struct	s_base
 int				startswithmtllib(char *line);
 int				startswithusemtl(char *line);
 
+int				valid_line(char *arg);
+t_vec2			cutout2coord(char *line, int start_offset);
+t_vec3			cutout3coord(char *line, int start_offset);
+unsigned int	*cutout_indices(char *line);
+
 int				ft_parse_mtllib(char *line);
 int				ft_parse_mesh(t_base *base, char *line);
 int				ft_parse_vertex(t_base *base, char *line, int i);
@@ -140,6 +145,6 @@ void			ft_model_draw(t_model *model, unsigned int shader);
 
 t_mat4			ft_lookat(const t_vec3 camPos, const t_vec3 targetPos, const t_vec3 worldUp);
 
-int ft_model_dump_debug(const t_model *model, const char *path);
+int				ft_model_dump_debug(const t_model *model, const char *path);
 
 #endif

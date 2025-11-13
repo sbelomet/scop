@@ -6,7 +6,7 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/28 15:30:10 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/11/05 14:08:26 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/11/13 11:50:22 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,11 +29,7 @@ void	ft_load_obj(t_base *base, char *path)
 	while (GL_TRUE)
 	{
 		line = get_next_line(fd);
-		if (line == NULL)
-		{
-			fail = 1;
-			break;
-		}
+		if (line == NULL) break;
 		if (line[0] == '#')
 		{
 			if (line) free(line);
