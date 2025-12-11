@@ -6,7 +6,7 @@
 /*   By: sbelomet <sbelomet@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/28 16:20:33 by sbelomet          #+#    #+#             */
-/*   Updated: 2025/11/13 12:06:59 by sbelomet         ###   ########.fr       */
+/*   Updated: 2025/12/11 13:05:43 by sbelomet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	ft_parse_mesh(t_base *base, char *)
 	new_mesh.indices = malloc(sizeof(unsigned int));
 	new_mesh.textures = malloc(sizeof(t_texture));
 	new_mesh.vert_count = 0;
-	new_mesh.vert_capacity = 1; /* we allocated one element */
+	new_mesh.vert_capacity = 1;
 	new_mesh.index_count = 0;
 	new_mesh.index_capacity = 1;
 	new_mesh.tex_count = 0;
@@ -62,12 +62,24 @@ int	ft_parse_texcoord(t_base *base, char *line, int mesh_i, int vert_i)
 	if (!(base->model.meshes) || (base->model.mesh_count < (unsigned int)(mesh_i + 1)))
 		return (GL_FALSE);
 	
-	if (!(base->model.meshes[mesh_i].vertices) || (base->model.meshes[mesh_i].vert_count < (unsigned int)(vert_i + 1)))
+	if (!(base->model.meshes[mesh_i].vertices))
 		return (GL_FALSE);
-	printf("adding tex coord\n");
-	base->model.meshes[mesh_i].vertices[vert_i].tex_coords = cutout2coord(line, 3);
-	printf("added\n");
+	if (base->model.meshes[mesh_i].vert_count >= (unsigned int)(vert_i + 1))
+	{
+		printf("adding tex coord\n");
+		base->model.meshes[mesh_i].vertices[vert_i].tex_coords = cutout2coord(line, 3);
+		printf("added\n");
+		return (GL_TRUE);
+	}
+	
+	t_vertex new_vert;
 
+	new_vert.position = ft_vec3_null();
+	new_vert.normal = ft_vec3_null();
+	new_vert.tex_coords = cutout2coord(line, 3);
+
+	if (!ft_vertex_push(&(base->model.meshes[mesh_i]), &new_vert))
+		return (GL_FALSE);
 	return (GL_TRUE);
 }
 
@@ -77,11 +89,24 @@ int	ft_parse_normal(t_base *base, char *line, int mesh_i, int vert_i)
 	if (!(base->model.meshes) || (base->model.mesh_count < (unsigned int)(mesh_i + 1)))
 		return (GL_FALSE);
 	
-	if (!(base->model.meshes[mesh_i].vertices) || (base->model.meshes[mesh_i].vert_count < (unsigned int)(vert_i + 1)))
+	if (!(base->model.meshes[mesh_i].vertices))
 		return (GL_FALSE);
-    
-	base->model.meshes[mesh_i].vertices[vert_i].normal = ft_vec3_normalize(cutout3coord(line, 3));
+	if (base->model.meshes[mesh_i].vert_count >= (unsigned int)(vert_i + 1))
+	{
+		printf("adding normal coord\n");
+		base->model.meshes[mesh_i].vertices[vert_i].normal = ft_vec3_normalize(cutout3coord(line, 3));
+		printf("added\n");
+		return (GL_TRUE);
+	}
+	
+	t_vertex new_vert;
 
+	new_vert.position = ft_vec3_null();
+	new_vert.normal = ft_vec3_normalize(cutout3coord(line, 3));
+	new_vert.tex_coords = ft_vec2(0, 0);
+
+	if (!ft_vertex_push(&(base->model.meshes[mesh_i]), &new_vert))
+		return (GL_FALSE);
 	return (GL_TRUE);
 }
 
